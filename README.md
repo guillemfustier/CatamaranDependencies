@@ -35,7 +35,7 @@ source install/setup.bash
 *   **Overview**: This ROS 2 package is responsible for the high-level control of the catamaran's rudder, which is actuated by Dynamixel motors.
 
 *   **Features**:
-    *   **`rudder_angle_controller`**: A C++ ROS 2 node that subscribes to an angle topic. When it receives an angle, it calculates the corresponding position for the motor's rack and pinion system and commands the Dynamixel motor to move to that position.
+    *   **`rudder_angle_controller`**: A C++ ROS 2 node that subscribes to an angle topic `rudder_angle`. When it receives an angle, it calculates the corresponding position for the motor's rack and pinion system and commands the Dynamixel motor to move to that position.
 
 *   **Build**: To build this package specifically, you can run:
     ```bash
