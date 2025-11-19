@@ -25,7 +25,7 @@ Install python dependencies with pip:
 pip3 install -r requirements.txt
 ```
 
-One of the dependencies is a modified version of the ```siyi_sdk```, which can be accessed in [siyi_camera_controller/zr30camera/siyi_sdk/README.md](./siyi_camera_controller/zr30camera/siyi_sdk/README.md). This version is modified to work with the ZR30 camera and ROS2.
+One of the dependencies is a modified version of the ```siyi_sdk```, which can be accessed in [/zr30camera/siyi_sdk/README.md](./zr30camera/siyi_sdk/README.md). This version is modified to work with the ZR30 camera and ROS2.
 
 <b>NOTE: The camera firmware must be kept up-to-date as older firmware might not include functionalities such as Absolute Zoom.</b>
 
