@@ -25,23 +25,9 @@ Install python dependencies with pip:
 pip3 install -r requirements.txt
 ```
 
-One of the dependencies is a modified version of the ```siyi_sdk```, which can be accessed in this repository:
-```https://github.com/aimas-lund/siyi_sdk_ros2_submodule```. This repo is modified to handle zoom functionalities of the ZR30 camera specifically.
+One of the dependencies is a modified version of the ```siyi_sdk```, which can be accessed in [siyi_camera_controller/zr30camera/siyi_sdk](./siyi_camera_controller/zr30camera/siyi_sdk) directory. This version is modified to work with the ZR30 camera and ROS2.
 
 <b>NOTE: The camera firmware must be kept up-to-date as older firmware might not include functionalities such as Absolute Zoom.</b>
-
-
-## Build ROS2 package
-
-Build with colcon:
-```bash
-colcon build
-```
-
-Source the setup file:
-```bash
-. install/setup.bash
-```
 
 ## Configure network
 The camera must be connected to the same network as the computer running the ROS2 nodes. Configure the computer network to the following settings:
