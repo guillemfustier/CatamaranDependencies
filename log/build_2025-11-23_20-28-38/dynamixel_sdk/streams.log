@@ -1,0 +1,41 @@
+[0.008s] Invoking command in '/home/josep/robotics/CatamaranDependencies/build/dynamixel_sdk': AMENT_PREFIX_PATH=/home/josep/robotics/CatamaranDependencies/install/custom_interfaces:${AMENT_PREFIX_PATH} CMAKE_PREFIX_PATH=/home/josep/robotics/CatamaranDependencies/install/custom_interfaces:/opt/ros/humble LD_LIBRARY_PATH=/home/josep/robotics/CatamaranDependencies/install/custom_interfaces/lib:${LD_LIBRARY_PATH} PYTHONPATH=/home/josep/robotics/CatamaranDependencies/install/custom_interfaces/local/lib/python3.10/dist-packages:${PYTHONPATH} /usr/bin/cmake --build /home/josep/robotics/CatamaranDependencies/build/dynamixel_sdk -- -j16 -l16
+[0.058s] [100%] Built target dynamixel_sdk
+[0.069s] Invoked command in '/home/josep/robotics/CatamaranDependencies/build/dynamixel_sdk' returned '0': AMENT_PREFIX_PATH=/home/josep/robotics/CatamaranDependencies/install/custom_interfaces:${AMENT_PREFIX_PATH} CMAKE_PREFIX_PATH=/home/josep/robotics/CatamaranDependencies/install/custom_interfaces:/opt/ros/humble LD_LIBRARY_PATH=/home/josep/robotics/CatamaranDependencies/install/custom_interfaces/lib:${LD_LIBRARY_PATH} PYTHONPATH=/home/josep/robotics/CatamaranDependencies/install/custom_interfaces/local/lib/python3.10/dist-packages:${PYTHONPATH} /usr/bin/cmake --build /home/josep/robotics/CatamaranDependencies/build/dynamixel_sdk -- -j16 -l16
+[0.071s] Invoking command in '/home/josep/robotics/CatamaranDependencies/build/dynamixel_sdk': AMENT_PREFIX_PATH=/home/josep/robotics/CatamaranDependencies/install/custom_interfaces:${AMENT_PREFIX_PATH} CMAKE_PREFIX_PATH=/home/josep/robotics/CatamaranDependencies/install/custom_interfaces:/opt/ros/humble LD_LIBRARY_PATH=/home/josep/robotics/CatamaranDependencies/install/custom_interfaces/lib:${LD_LIBRARY_PATH} PYTHONPATH=/home/josep/robotics/CatamaranDependencies/install/custom_interfaces/local/lib/python3.10/dist-packages:${PYTHONPATH} /usr/bin/cmake --install /home/josep/robotics/CatamaranDependencies/build/dynamixel_sdk
+[0.079s] -- Install configuration: ""
+[0.079s] -- Up-to-date: /home/josep/robotics/CatamaranDependencies/install/dynamixel_sdk/include/
+[0.079s] -- Up-to-date: /home/josep/robotics/CatamaranDependencies/install/dynamixel_sdk/include//dynamixel_sdk
+[0.079s] -- Up-to-date: /home/josep/robotics/CatamaranDependencies/install/dynamixel_sdk/include//dynamixel_sdk/group_bulk_write.h
+[0.079s] -- Up-to-date: /home/josep/robotics/CatamaranDependencies/install/dynamixel_sdk/include//dynamixel_sdk/packet_handler.h
+[0.079s] -- Up-to-date: /home/josep/robotics/CatamaranDependencies/install/dynamixel_sdk/include//dynamixel_sdk/port_handler_windows.h
+[0.079s] -- Up-to-date: /home/josep/robotics/CatamaranDependencies/install/dynamixel_sdk/include//dynamixel_sdk/port_handler_linux.h
+[0.079s] -- Up-to-date: /home/josep/robotics/CatamaranDependencies/install/dynamixel_sdk/include//dynamixel_sdk/protocol1_packet_handler.h
+[0.079s] -- Up-to-date: /home/josep/robotics/CatamaranDependencies/install/dynamixel_sdk/include//dynamixel_sdk/protocol2_packet_handler.h
+[0.079s] -- Up-to-date: /home/josep/robotics/CatamaranDependencies/install/dynamixel_sdk/include//dynamixel_sdk/port_handler_mac.h
+[0.079s] -- Up-to-date: /home/josep/robotics/CatamaranDependencies/install/dynamixel_sdk/include//dynamixel_sdk/dynamixel_sdk.h
+[0.079s] -- Up-to-date: /home/josep/robotics/CatamaranDependencies/install/dynamixel_sdk/include//dynamixel_sdk/port_handler_arduino.h
+[0.079s] -- Up-to-date: /home/josep/robotics/CatamaranDependencies/install/dynamixel_sdk/include//dynamixel_sdk/port_handler.h
+[0.079s] -- Up-to-date: /home/josep/robotics/CatamaranDependencies/install/dynamixel_sdk/include//dynamixel_sdk/group_bulk_read.h
+[0.079s] -- Up-to-date: /home/josep/robotics/CatamaranDependencies/install/dynamixel_sdk/include//dynamixel_sdk/group_sync_write.h
+[0.079s] -- Up-to-date: /home/josep/robotics/CatamaranDependencies/install/dynamixel_sdk/include//dynamixel_sdk/group_sync_read.h
+[0.079s] -- Up-to-date: /home/josep/robotics/CatamaranDependencies/install/dynamixel_sdk/lib/libdynamixel_sdk.so
+[0.079s] -- Up-to-date: /home/josep/robotics/CatamaranDependencies/install/dynamixel_sdk/share/dynamixel_sdk/environment/library_path.sh
+[0.080s] -- Up-to-date: /home/josep/robotics/CatamaranDependencies/install/dynamixel_sdk/share/dynamixel_sdk/environment/library_path.dsv
+[0.080s] -- Up-to-date: /home/josep/robotics/CatamaranDependencies/install/dynamixel_sdk/share/ament_index/resource_index/package_run_dependencies/dynamixel_sdk
+[0.080s] -- Up-to-date: /home/josep/robotics/CatamaranDependencies/install/dynamixel_sdk/share/ament_index/resource_index/parent_prefix_path/dynamixel_sdk
+[0.080s] -- Up-to-date: /home/josep/robotics/CatamaranDependencies/install/dynamixel_sdk/share/dynamixel_sdk/environment/ament_prefix_path.sh
+[0.080s] -- Up-to-date: /home/josep/robotics/CatamaranDependencies/install/dynamixel_sdk/share/dynamixel_sdk/environment/ament_prefix_path.dsv
+[0.080s] -- Up-to-date: /home/josep/robotics/CatamaranDependencies/install/dynamixel_sdk/share/dynamixel_sdk/environment/path.sh
+[0.080s] -- Up-to-date: /home/josep/robotics/CatamaranDependencies/install/dynamixel_sdk/share/dynamixel_sdk/environment/path.dsv
+[0.080s] -- Up-to-date: /home/josep/robotics/CatamaranDependencies/install/dynamixel_sdk/share/dynamixel_sdk/local_setup.bash
+[0.080s] -- Up-to-date: /home/josep/robotics/CatamaranDependencies/install/dynamixel_sdk/share/dynamixel_sdk/local_setup.sh
+[0.080s] -- Up-to-date: /home/josep/robotics/CatamaranDependencies/install/dynamixel_sdk/share/dynamixel_sdk/local_setup.zsh
+[0.080s] -- Up-to-date: /home/josep/robotics/CatamaranDependencies/install/dynamixel_sdk/share/dynamixel_sdk/local_setup.dsv
+[0.080s] -- Installing: /home/josep/robotics/CatamaranDependencies/install/dynamixel_sdk/share/dynamixel_sdk/package.dsv
+[0.080s] -- Up-to-date: /home/josep/robotics/CatamaranDependencies/install/dynamixel_sdk/share/ament_index/resource_index/packages/dynamixel_sdk
+[0.080s] -- Up-to-date: /home/josep/robotics/CatamaranDependencies/install/dynamixel_sdk/share/dynamixel_sdk/cmake/ament_cmake_export_include_directories-extras.cmake
+[0.080s] -- Up-to-date: /home/josep/robotics/CatamaranDependencies/install/dynamixel_sdk/share/dynamixel_sdk/cmake/ament_cmake_export_libraries-extras.cmake
+[0.080s] -- Up-to-date: /home/josep/robotics/CatamaranDependencies/install/dynamixel_sdk/share/dynamixel_sdk/cmake/dynamixel_sdkConfig.cmake
+[0.080s] -- Up-to-date: /home/josep/robotics/CatamaranDependencies/install/dynamixel_sdk/share/dynamixel_sdk/cmake/dynamixel_sdkConfig-version.cmake
+[0.080s] -- Up-to-date: /home/josep/robotics/CatamaranDependencies/install/dynamixel_sdk/share/dynamixel_sdk/package.xml
+[0.082s] Invoked command in '/home/josep/robotics/CatamaranDependencies/build/dynamixel_sdk' returned '0': AMENT_PREFIX_PATH=/home/josep/robotics/CatamaranDependencies/install/custom_interfaces:${AMENT_PREFIX_PATH} CMAKE_PREFIX_PATH=/home/josep/robotics/CatamaranDependencies/install/custom_interfaces:/opt/ros/humble LD_LIBRARY_PATH=/home/josep/robotics/CatamaranDependencies/install/custom_interfaces/lib:${LD_LIBRARY_PATH} PYTHONPATH=/home/josep/robotics/CatamaranDependencies/install/custom_interfaces/local/lib/python3.10/dist-packages:${PYTHONPATH} /usr/bin/cmake --install /home/josep/robotics/CatamaranDependencies/build/dynamixel_sdk

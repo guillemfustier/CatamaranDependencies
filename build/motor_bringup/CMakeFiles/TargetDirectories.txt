@@ -1,0 +1,13 @@
+/home/josep/robotics/CatamaranDependencies/build/motor_bringup/CMakeFiles/uninstall.dir
+/home/josep/robotics/CatamaranDependencies/build/motor_bringup/CMakeFiles/motor_bringup_uninstall.dir
+/home/josep/robotics/CatamaranDependencies/build/motor_bringup/CMakeFiles/rudder_angle_controller.dir
+/home/josep/robotics/CatamaranDependencies/build/motor_bringup/CMakeFiles/rudder_angle_controller_abs.dir
+/home/josep/robotics/CatamaranDependencies/build/motor_bringup/CMakeFiles/rudder_angle_publisher.dir
+/home/josep/robotics/CatamaranDependencies/build/motor_bringup/CMakeFiles/cmdvel_motor_controller.dir
+/home/josep/robotics/CatamaranDependencies/build/motor_bringup/CMakeFiles/test.dir
+/home/josep/robotics/CatamaranDependencies/build/motor_bringup/CMakeFiles/edit_cache.dir
+/home/josep/robotics/CatamaranDependencies/build/motor_bringup/CMakeFiles/rebuild_cache.dir
+/home/josep/robotics/CatamaranDependencies/build/motor_bringup/CMakeFiles/list_install_components.dir
+/home/josep/robotics/CatamaranDependencies/build/motor_bringup/CMakeFiles/install.dir
+/home/josep/robotics/CatamaranDependencies/build/motor_bringup/CMakeFiles/install/local.dir
+/home/josep/robotics/CatamaranDependencies/build/motor_bringup/CMakeFiles/install/strip.dir

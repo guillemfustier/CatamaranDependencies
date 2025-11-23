@@ -12,12 +12,14 @@ find_package(dynamixel_sdk REQUIRED)
 find_package(custom_interfaces REQUIRED)
 find_package(geometry_msgs REQUIRED)
 find_package(std_msgs REQUIRED)
+find_package(mavros_msgs REQUIRED)
 
 include_directories(include)
 
 add_executable(rudder_angle_controller src/rudder_angle_controller.cpp)
 add_executable(rudder_angle_controller_abs src/rudder_angle_controller_abs.cpp)
 add_executable(rudder_angle_publisher src/rudder_angle_publisher.cpp)
+add_executable(cmdvel_motor_controller src/cmdvel_motor_controller.cpp)
 
 ament_target_dependencies(rudder_angle_controller 
   rclcpp
@@ -40,10 +42,19 @@ ament_target_dependencies(rudder_angle_publisher
   std_msgs
 )
 
+ament_target_dependencies(cmdvel_motor_controller 
+  rclcpp 
+  geometry_msgs
+  mavros_msgs
+  std_msgs
+)
+
+
 install (TARGETS
   rudder_angle_controller
   rudder_angle_controller_abs
   rudder_angle_publisher
+  cmdvel_motor_controller
   DESTINATION lib/${PROJECT_NAME}
 )
 

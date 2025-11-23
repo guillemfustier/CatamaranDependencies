@@ -1,0 +1,106 @@
+{
+	"configurations" : 
+	[
+		{
+			"directories" : 
+			[
+				{
+					"build" : ".",
+					"hasInstallRule" : true,
+					"jsonFile" : "directory-.-9838119b4cd8c41c9c86.json",
+					"minimumCMakeVersion" : 
+					{
+						"string" : "3.12"
+					},
+					"projectIndex" : 0,
+					"source" : ".",
+					"targetIndexes" : 
+					[
+						0,
+						1,
+						2,
+						3,
+						4,
+						5
+					]
+				}
+			],
+			"name" : "",
+			"projects" : 
+			[
+				{
+					"directoryIndexes" : 
+					[
+						0
+					],
+					"name" : "motor_bringup",
+					"targetIndexes" : 
+					[
+						0,
+						1,
+						2,
+						3,
+						4,
+						5
+					]
+				}
+			],
+			"targets" : 
+			[
+				{
+					"directoryIndex" : 0,
+					"id" : "cmdvel_motor_controller::@6890427a1f51a3e7e1df",
+					"jsonFile" : "target-cmdvel_motor_controller-a8f10b25f9cf75ee1e00.json",
+					"name" : "cmdvel_motor_controller",
+					"projectIndex" : 0
+				},
+				{
+					"directoryIndex" : 0,
+					"id" : "motor_bringup_uninstall::@6890427a1f51a3e7e1df",
+					"jsonFile" : "target-motor_bringup_uninstall-b321dcc2cd90fdf17023.json",
+					"name" : "motor_bringup_uninstall",
+					"projectIndex" : 0
+				},
+				{
+					"directoryIndex" : 0,
+					"id" : "rudder_angle_controller::@6890427a1f51a3e7e1df",
+					"jsonFile" : "target-rudder_angle_controller-c38aadffb6b78384a62c.json",
+					"name" : "rudder_angle_controller",
+					"projectIndex" : 0
+				},
+				{
+					"directoryIndex" : 0,
+					"id" : "rudder_angle_controller_abs::@6890427a1f51a3e7e1df",
+					"jsonFile" : "target-rudder_angle_controller_abs-2dbf069e1a3cc32f42d9.json",
+					"name" : "rudder_angle_controller_abs",
+					"projectIndex" : 0
+				},
+				{
+					"directoryIndex" : 0,
+					"id" : "rudder_angle_publisher::@6890427a1f51a3e7e1df",
+					"jsonFile" : "target-rudder_angle_publisher-c1ec56613047429d285c.json",
+					"name" : "rudder_angle_publisher",
+					"projectIndex" : 0
+				},
+				{
+					"directoryIndex" : 0,
+					"id" : "uninstall::@6890427a1f51a3e7e1df",
+					"jsonFile" : "target-uninstall-ccb383779105c342d646.json",
+					"name" : "uninstall",
+					"projectIndex" : 0
+				}
+			]
+		}
+	],
+	"kind" : "codemodel",
+	"paths" : 
+	{
+		"build" : "/home/josep/robotics/CatamaranDependencies/build/motor_bringup",
+		"source" : "/home/josep/robotics/CatamaranDependencies/motor_bringup"
+	},
+	"version" : 
+	{
+		"major" : 2,
+		"minor" : 3
+	}
+}

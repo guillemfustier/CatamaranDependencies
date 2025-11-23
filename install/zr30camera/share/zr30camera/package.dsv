@@ -1,0 +1,6 @@
+source;share/zr30camera/hook/pythonpath.ps1
+source;share/zr30camera/hook/pythonpath.dsv
+source;share/zr30camera/hook/pythonpath.sh
+source;share/zr30camera/hook/ament_prefix_path.ps1
+source;share/zr30camera/hook/ament_prefix_path.dsv
+source;share/zr30camera/hook/ament_prefix_path.sh

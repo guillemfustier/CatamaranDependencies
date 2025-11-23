@@ -1,0 +1,5 @@
+[console_scripts]
+cam_teleop = zr30camera.cam_teleop:main
+controller = zr30camera.camera_controller:main
+stream = zr30camera.camera_stream:main
+

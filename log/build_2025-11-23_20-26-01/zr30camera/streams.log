@@ -1,0 +1,152 @@
+[0.719s] Invoking command in '/home/josep/robotics/CatamaranDependencies/siyi_camera_controller': PYTHONPATH=/home/josep/robotics/CatamaranDependencies/build/zr30camera/prefix_override:/home/josep/.local/lib/python3.10/site-packages/colcon_core/task/python/colcon_distutils_commands:/home/josep/robotics/CatamaranDependencies/install/zr30camera/lib/python3.10/site-packages:${PYTHONPATH} /usr/bin/python3 -W ignore:setup.py install is deprecated -W ignore:easy_install command is deprecated setup.py egg_info --egg-base ../build/zr30camera build --build-base /home/josep/robotics/CatamaranDependencies/build/zr30camera/build install --record /home/josep/robotics/CatamaranDependencies/build/zr30camera/install.log --single-version-externally-managed install_data
+[0.878s] running egg_info
+[0.878s] creating ../build/zr30camera/zr30camera.egg-info
+[0.879s] writing ../build/zr30camera/zr30camera.egg-info/PKG-INFO
+[0.879s] writing dependency_links to ../build/zr30camera/zr30camera.egg-info/dependency_links.txt
+[0.879s] writing entry points to ../build/zr30camera/zr30camera.egg-info/entry_points.txt
+[0.879s] writing requirements to ../build/zr30camera/zr30camera.egg-info/requires.txt
+[0.879s] writing top-level names to ../build/zr30camera/zr30camera.egg-info/top_level.txt
+[0.879s] writing manifest file '../build/zr30camera/zr30camera.egg-info/SOURCES.txt'
+[0.880s] reading manifest file '../build/zr30camera/zr30camera.egg-info/SOURCES.txt'
+[0.880s] adding license file 'LICENSE'
+[0.881s] writing manifest file '../build/zr30camera/zr30camera.egg-info/SOURCES.txt'
+[0.881s] running build
+[0.881s] running build_py
+[0.881s] creating /home/josep/robotics/CatamaranDependencies/build/zr30camera/build
+[0.881s] creating /home/josep/robotics/CatamaranDependencies/build/zr30camera/build/lib
+[0.881s] creating /home/josep/robotics/CatamaranDependencies/build/zr30camera/build/lib/zr30camera
+[0.881s] copying zr30camera/camera_stream.py -> /home/josep/robotics/CatamaranDependencies/build/zr30camera/build/lib/zr30camera
+[0.882s] copying zr30camera/cam_teleop.py -> /home/josep/robotics/CatamaranDependencies/build/zr30camera/build/lib/zr30camera
+[0.882s] copying zr30camera/camera_controller.py -> /home/josep/robotics/CatamaranDependencies/build/zr30camera/build/lib/zr30camera
+[0.882s] copying zr30camera/__init__.py -> /home/josep/robotics/CatamaranDependencies/build/zr30camera/build/lib/zr30camera
+[0.882s] creating /home/josep/robotics/CatamaranDependencies/build/zr30camera/build/lib/zr30camera/siyi_sdk
+[0.882s] copying zr30camera/siyi_sdk/siyi_sdk.py -> /home/josep/robotics/CatamaranDependencies/build/zr30camera/build/lib/zr30camera/siyi_sdk
+[0.882s] copying zr30camera/siyi_sdk/utils.py -> /home/josep/robotics/CatamaranDependencies/build/zr30camera/build/lib/zr30camera/siyi_sdk
+[0.882s] copying zr30camera/siyi_sdk/siyi_message.py -> /home/josep/robotics/CatamaranDependencies/build/zr30camera/build/lib/zr30camera/siyi_sdk
+[0.882s] copying zr30camera/siyi_sdk/crc16_python.py -> /home/josep/robotics/CatamaranDependencies/build/zr30camera/build/lib/zr30camera/siyi_sdk
+[0.882s] copying zr30camera/siyi_sdk/__init__.py -> /home/josep/robotics/CatamaranDependencies/build/zr30camera/build/lib/zr30camera/siyi_sdk
+[0.883s] copying zr30camera/siyi_sdk/cameras.py -> /home/josep/robotics/CatamaranDependencies/build/zr30camera/build/lib/zr30camera/siyi_sdk
+[0.883s] copying zr30camera/siyi_sdk/stream.py -> /home/josep/robotics/CatamaranDependencies/build/zr30camera/build/lib/zr30camera/siyi_sdk
+[0.883s] copying zr30camera/siyi_sdk/siyi_sdk.bak.py -> /home/josep/robotics/CatamaranDependencies/build/zr30camera/build/lib/zr30camera/siyi_sdk
+[0.883s] creating /home/josep/robotics/CatamaranDependencies/build/zr30camera/build/lib/zr30camera/siyi_sdk/tests
+[0.883s] copying zr30camera/siyi_sdk/tests/test_gimbal_rotation.py -> /home/josep/robotics/CatamaranDependencies/build/zr30camera/build/lib/zr30camera/siyi_sdk/tests
+[0.883s] copying zr30camera/siyi_sdk/tests/test_get_gimbal_info.py -> /home/josep/robotics/CatamaranDependencies/build/zr30camera/build/lib/zr30camera/siyi_sdk/tests
+[0.883s] copying zr30camera/siyi_sdk/tests/siyi_sdk.py -> /home/josep/robotics/CatamaranDependencies/build/zr30camera/build/lib/zr30camera/siyi_sdk/tests
+[0.883s] copying zr30camera/siyi_sdk/tests/test_get_fw_ver.py -> /home/josep/robotics/CatamaranDependencies/build/zr30camera/build/lib/zr30camera/siyi_sdk/tests
+[0.883s] copying zr30camera/siyi_sdk/tests/test_rtsp.py -> /home/josep/robotics/CatamaranDependencies/build/zr30camera/build/lib/zr30camera/siyi_sdk/tests
+[0.883s] copying zr30camera/siyi_sdk/tests/udp_server.py -> /home/josep/robotics/CatamaranDependencies/build/zr30camera/build/lib/zr30camera/siyi_sdk/tests
+[0.883s] copying zr30camera/siyi_sdk/tests/test_center_gimbal.py -> /home/josep/robotics/CatamaranDependencies/build/zr30camera/build/lib/zr30camera/siyi_sdk/tests
+[0.883s] copying zr30camera/siyi_sdk/tests/test_from_rtsp_to_rtmp.py -> /home/josep/robotics/CatamaranDependencies/build/zr30camera/build/lib/zr30camera/siyi_sdk/tests
+[0.883s] copying zr30camera/siyi_sdk/tests/test_fpv_mode.py -> /home/josep/robotics/CatamaranDependencies/build/zr30camera/build/lib/zr30camera/siyi_sdk/tests
+[0.884s] copying zr30camera/siyi_sdk/tests/utils.py -> /home/josep/robotics/CatamaranDependencies/build/zr30camera/build/lib/zr30camera/siyi_sdk/tests
+[0.884s] copying zr30camera/siyi_sdk/tests/test_lock_mode.py -> /home/josep/robotics/CatamaranDependencies/build/zr30camera/build/lib/zr30camera/siyi_sdk/tests
+[0.884s] copying zr30camera/siyi_sdk/tests/test_absolute_zoom.py -> /home/josep/robotics/CatamaranDependencies/build/zr30camera/build/lib/zr30camera/siyi_sdk/tests
+[0.884s] copying zr30camera/siyi_sdk/tests/siyi_message.py -> /home/josep/robotics/CatamaranDependencies/build/zr30camera/build/lib/zr30camera/siyi_sdk/tests
+[0.884s] copying zr30camera/siyi_sdk/tests/test_follow_mode.py -> /home/josep/robotics/CatamaranDependencies/build/zr30camera/build/lib/zr30camera/siyi_sdk/tests
+[0.884s] copying zr30camera/siyi_sdk/tests/test_print_attitude.py -> /home/josep/robotics/CatamaranDependencies/build/zr30camera/build/lib/zr30camera/siyi_sdk/tests
+[0.884s] copying zr30camera/siyi_sdk/tests/test_record_video.py -> /home/josep/robotics/CatamaranDependencies/build/zr30camera/build/lib/zr30camera/siyi_sdk/tests
+[0.884s] copying zr30camera/siyi_sdk/tests/tkgui.py -> /home/josep/robotics/CatamaranDependencies/build/zr30camera/build/lib/zr30camera/siyi_sdk/tests
+[0.884s] copying zr30camera/siyi_sdk/tests/test_zoom.py -> /home/josep/robotics/CatamaranDependencies/build/zr30camera/build/lib/zr30camera/siyi_sdk/tests
+[0.884s] copying zr30camera/siyi_sdk/tests/crc16_python.py -> /home/josep/robotics/CatamaranDependencies/build/zr30camera/build/lib/zr30camera/siyi_sdk/tests
+[0.884s] copying zr30camera/siyi_sdk/tests/__init__.py -> /home/josep/robotics/CatamaranDependencies/build/zr30camera/build/lib/zr30camera/siyi_sdk/tests
+[0.884s] copying zr30camera/siyi_sdk/tests/cameras.py -> /home/josep/robotics/CatamaranDependencies/build/zr30camera/build/lib/zr30camera/siyi_sdk/tests
+[0.884s] copying zr30camera/siyi_sdk/tests/test_set_angles.py -> /home/josep/robotics/CatamaranDependencies/build/zr30camera/build/lib/zr30camera/siyi_sdk/tests
+[0.884s] copying zr30camera/siyi_sdk/tests/test_rtmp_stream.py -> /home/josep/robotics/CatamaranDependencies/build/zr30camera/build/lib/zr30camera/siyi_sdk/tests
+[0.884s] copying zr30camera/siyi_sdk/tests/test_get_hw_id.py -> /home/josep/robotics/CatamaranDependencies/build/zr30camera/build/lib/zr30camera/siyi_sdk/tests
+[0.884s] copying zr30camera/siyi_sdk/README.md -> /home/josep/robotics/CatamaranDependencies/build/zr30camera/build/lib/zr30camera/siyi_sdk
+[0.885s] copying zr30camera/siyi_sdk/LICENSE -> /home/josep/robotics/CatamaranDependencies/build/zr30camera/build/lib/zr30camera/siyi_sdk
+[0.885s] running install
+[0.885s] running install_lib
+[0.886s] creating /home/josep/robotics/CatamaranDependencies/install/zr30camera/lib/python3.10/site-packages/zr30camera
+[0.886s] copying /home/josep/robotics/CatamaranDependencies/build/zr30camera/build/lib/zr30camera/camera_stream.py -> /home/josep/robotics/CatamaranDependencies/install/zr30camera/lib/python3.10/site-packages/zr30camera
+[0.886s] copying /home/josep/robotics/CatamaranDependencies/build/zr30camera/build/lib/zr30camera/cam_teleop.py -> /home/josep/robotics/CatamaranDependencies/install/zr30camera/lib/python3.10/site-packages/zr30camera
+[0.886s] copying /home/josep/robotics/CatamaranDependencies/build/zr30camera/build/lib/zr30camera/camera_controller.py -> /home/josep/robotics/CatamaranDependencies/install/zr30camera/lib/python3.10/site-packages/zr30camera
+[0.886s] copying /home/josep/robotics/CatamaranDependencies/build/zr30camera/build/lib/zr30camera/__init__.py -> /home/josep/robotics/CatamaranDependencies/install/zr30camera/lib/python3.10/site-packages/zr30camera
+[0.886s] creating /home/josep/robotics/CatamaranDependencies/install/zr30camera/lib/python3.10/site-packages/zr30camera/siyi_sdk
+[0.886s] copying /home/josep/robotics/CatamaranDependencies/build/zr30camera/build/lib/zr30camera/siyi_sdk/siyi_sdk.py -> /home/josep/robotics/CatamaranDependencies/install/zr30camera/lib/python3.10/site-packages/zr30camera/siyi_sdk
+[0.886s] copying /home/josep/robotics/CatamaranDependencies/build/zr30camera/build/lib/zr30camera/siyi_sdk/utils.py -> /home/josep/robotics/CatamaranDependencies/install/zr30camera/lib/python3.10/site-packages/zr30camera/siyi_sdk
+[0.886s] copying /home/josep/robotics/CatamaranDependencies/build/zr30camera/build/lib/zr30camera/siyi_sdk/siyi_message.py -> /home/josep/robotics/CatamaranDependencies/install/zr30camera/lib/python3.10/site-packages/zr30camera/siyi_sdk
+[0.886s] copying /home/josep/robotics/CatamaranDependencies/build/zr30camera/build/lib/zr30camera/siyi_sdk/README.md -> /home/josep/robotics/CatamaranDependencies/install/zr30camera/lib/python3.10/site-packages/zr30camera/siyi_sdk
+[0.886s] creating /home/josep/robotics/CatamaranDependencies/install/zr30camera/lib/python3.10/site-packages/zr30camera/siyi_sdk/tests
+[0.887s] copying /home/josep/robotics/CatamaranDependencies/build/zr30camera/build/lib/zr30camera/siyi_sdk/tests/test_gimbal_rotation.py -> /home/josep/robotics/CatamaranDependencies/install/zr30camera/lib/python3.10/site-packages/zr30camera/siyi_sdk/tests
+[0.887s] copying /home/josep/robotics/CatamaranDependencies/build/zr30camera/build/lib/zr30camera/siyi_sdk/tests/test_get_gimbal_info.py -> /home/josep/robotics/CatamaranDependencies/install/zr30camera/lib/python3.10/site-packages/zr30camera/siyi_sdk/tests
+[0.887s] copying /home/josep/robotics/CatamaranDependencies/build/zr30camera/build/lib/zr30camera/siyi_sdk/tests/siyi_sdk.py -> /home/josep/robotics/CatamaranDependencies/install/zr30camera/lib/python3.10/site-packages/zr30camera/siyi_sdk/tests
+[0.887s] copying /home/josep/robotics/CatamaranDependencies/build/zr30camera/build/lib/zr30camera/siyi_sdk/tests/test_get_fw_ver.py -> /home/josep/robotics/CatamaranDependencies/install/zr30camera/lib/python3.10/site-packages/zr30camera/siyi_sdk/tests
+[0.887s] copying /home/josep/robotics/CatamaranDependencies/build/zr30camera/build/lib/zr30camera/siyi_sdk/tests/test_rtsp.py -> /home/josep/robotics/CatamaranDependencies/install/zr30camera/lib/python3.10/site-packages/zr30camera/siyi_sdk/tests
+[0.887s] copying /home/josep/robotics/CatamaranDependencies/build/zr30camera/build/lib/zr30camera/siyi_sdk/tests/udp_server.py -> /home/josep/robotics/CatamaranDependencies/install/zr30camera/lib/python3.10/site-packages/zr30camera/siyi_sdk/tests
+[0.887s] copying /home/josep/robotics/CatamaranDependencies/build/zr30camera/build/lib/zr30camera/siyi_sdk/tests/test_center_gimbal.py -> /home/josep/robotics/CatamaranDependencies/install/zr30camera/lib/python3.10/site-packages/zr30camera/siyi_sdk/tests
+[0.887s] copying /home/josep/robotics/CatamaranDependencies/build/zr30camera/build/lib/zr30camera/siyi_sdk/tests/test_from_rtsp_to_rtmp.py -> /home/josep/robotics/CatamaranDependencies/install/zr30camera/lib/python3.10/site-packages/zr30camera/siyi_sdk/tests
+[0.887s] copying /home/josep/robotics/CatamaranDependencies/build/zr30camera/build/lib/zr30camera/siyi_sdk/tests/test_fpv_mode.py -> /home/josep/robotics/CatamaranDependencies/install/zr30camera/lib/python3.10/site-packages/zr30camera/siyi_sdk/tests
+[0.887s] copying /home/josep/robotics/CatamaranDependencies/build/zr30camera/build/lib/zr30camera/siyi_sdk/tests/utils.py -> /home/josep/robotics/CatamaranDependencies/install/zr30camera/lib/python3.10/site-packages/zr30camera/siyi_sdk/tests
+[0.887s] copying /home/josep/robotics/CatamaranDependencies/build/zr30camera/build/lib/zr30camera/siyi_sdk/tests/test_lock_mode.py -> /home/josep/robotics/CatamaranDependencies/install/zr30camera/lib/python3.10/site-packages/zr30camera/siyi_sdk/tests
+[0.887s] copying /home/josep/robotics/CatamaranDependencies/build/zr30camera/build/lib/zr30camera/siyi_sdk/tests/test_absolute_zoom.py -> /home/josep/robotics/CatamaranDependencies/install/zr30camera/lib/python3.10/site-packages/zr30camera/siyi_sdk/tests
+[0.887s] copying /home/josep/robotics/CatamaranDependencies/build/zr30camera/build/lib/zr30camera/siyi_sdk/tests/siyi_message.py -> /home/josep/robotics/CatamaranDependencies/install/zr30camera/lib/python3.10/site-packages/zr30camera/siyi_sdk/tests
+[0.887s] copying /home/josep/robotics/CatamaranDependencies/build/zr30camera/build/lib/zr30camera/siyi_sdk/tests/test_follow_mode.py -> /home/josep/robotics/CatamaranDependencies/install/zr30camera/lib/python3.10/site-packages/zr30camera/siyi_sdk/tests
+[0.887s] copying /home/josep/robotics/CatamaranDependencies/build/zr30camera/build/lib/zr30camera/siyi_sdk/tests/test_print_attitude.py -> /home/josep/robotics/CatamaranDependencies/install/zr30camera/lib/python3.10/site-packages/zr30camera/siyi_sdk/tests
+[0.887s] copying /home/josep/robotics/CatamaranDependencies/build/zr30camera/build/lib/zr30camera/siyi_sdk/tests/test_record_video.py -> /home/josep/robotics/CatamaranDependencies/install/zr30camera/lib/python3.10/site-packages/zr30camera/siyi_sdk/tests
+[0.888s] copying /home/josep/robotics/CatamaranDependencies/build/zr30camera/build/lib/zr30camera/siyi_sdk/tests/tkgui.py -> /home/josep/robotics/CatamaranDependencies/install/zr30camera/lib/python3.10/site-packages/zr30camera/siyi_sdk/tests
+[0.888s] copying /home/josep/robotics/CatamaranDependencies/build/zr30camera/build/lib/zr30camera/siyi_sdk/tests/test_zoom.py -> /home/josep/robotics/CatamaranDependencies/install/zr30camera/lib/python3.10/site-packages/zr30camera/siyi_sdk/tests
+[0.888s] copying /home/josep/robotics/CatamaranDependencies/build/zr30camera/build/lib/zr30camera/siyi_sdk/tests/crc16_python.py -> /home/josep/robotics/CatamaranDependencies/install/zr30camera/lib/python3.10/site-packages/zr30camera/siyi_sdk/tests
+[0.888s] copying /home/josep/robotics/CatamaranDependencies/build/zr30camera/build/lib/zr30camera/siyi_sdk/tests/__init__.py -> /home/josep/robotics/CatamaranDependencies/install/zr30camera/lib/python3.10/site-packages/zr30camera/siyi_sdk/tests
+[0.888s] copying /home/josep/robotics/CatamaranDependencies/build/zr30camera/build/lib/zr30camera/siyi_sdk/tests/cameras.py -> /home/josep/robotics/CatamaranDependencies/install/zr30camera/lib/python3.10/site-packages/zr30camera/siyi_sdk/tests
+[0.888s] copying /home/josep/robotics/CatamaranDependencies/build/zr30camera/build/lib/zr30camera/siyi_sdk/tests/test_set_angles.py -> /home/josep/robotics/CatamaranDependencies/install/zr30camera/lib/python3.10/site-packages/zr30camera/siyi_sdk/tests
+[0.888s] copying /home/josep/robotics/CatamaranDependencies/build/zr30camera/build/lib/zr30camera/siyi_sdk/tests/test_rtmp_stream.py -> /home/josep/robotics/CatamaranDependencies/install/zr30camera/lib/python3.10/site-packages/zr30camera/siyi_sdk/tests
+[0.888s] copying /home/josep/robotics/CatamaranDependencies/build/zr30camera/build/lib/zr30camera/siyi_sdk/tests/test_get_hw_id.py -> /home/josep/robotics/CatamaranDependencies/install/zr30camera/lib/python3.10/site-packages/zr30camera/siyi_sdk/tests
+[0.888s] copying /home/josep/robotics/CatamaranDependencies/build/zr30camera/build/lib/zr30camera/siyi_sdk/crc16_python.py -> /home/josep/robotics/CatamaranDependencies/install/zr30camera/lib/python3.10/site-packages/zr30camera/siyi_sdk
+[0.888s] copying /home/josep/robotics/CatamaranDependencies/build/zr30camera/build/lib/zr30camera/siyi_sdk/__init__.py -> /home/josep/robotics/CatamaranDependencies/install/zr30camera/lib/python3.10/site-packages/zr30camera/siyi_sdk
+[0.888s] copying /home/josep/robotics/CatamaranDependencies/build/zr30camera/build/lib/zr30camera/siyi_sdk/cameras.py -> /home/josep/robotics/CatamaranDependencies/install/zr30camera/lib/python3.10/site-packages/zr30camera/siyi_sdk
+[0.888s] copying /home/josep/robotics/CatamaranDependencies/build/zr30camera/build/lib/zr30camera/siyi_sdk/stream.py -> /home/josep/robotics/CatamaranDependencies/install/zr30camera/lib/python3.10/site-packages/zr30camera/siyi_sdk
+[0.888s] copying /home/josep/robotics/CatamaranDependencies/build/zr30camera/build/lib/zr30camera/siyi_sdk/siyi_sdk.bak.py -> /home/josep/robotics/CatamaranDependencies/install/zr30camera/lib/python3.10/site-packages/zr30camera/siyi_sdk
+[0.888s] copying /home/josep/robotics/CatamaranDependencies/build/zr30camera/build/lib/zr30camera/siyi_sdk/LICENSE -> /home/josep/robotics/CatamaranDependencies/install/zr30camera/lib/python3.10/site-packages/zr30camera/siyi_sdk
+[0.889s] byte-compiling /home/josep/robotics/CatamaranDependencies/install/zr30camera/lib/python3.10/site-packages/zr30camera/camera_stream.py to camera_stream.cpython-310.pyc
+[0.889s] byte-compiling /home/josep/robotics/CatamaranDependencies/install/zr30camera/lib/python3.10/site-packages/zr30camera/cam_teleop.py to cam_teleop.cpython-310.pyc
+[0.890s] byte-compiling /home/josep/robotics/CatamaranDependencies/install/zr30camera/lib/python3.10/site-packages/zr30camera/camera_controller.py to camera_controller.cpython-310.pyc
+[0.891s] byte-compiling /home/josep/robotics/CatamaranDependencies/install/zr30camera/lib/python3.10/site-packages/zr30camera/__init__.py to __init__.cpython-310.pyc
+[0.891s] byte-compiling /home/josep/robotics/CatamaranDependencies/install/zr30camera/lib/python3.10/site-packages/zr30camera/siyi_sdk/siyi_sdk.py to siyi_sdk.cpython-310.pyc
+[0.894s] byte-compiling /home/josep/robotics/CatamaranDependencies/install/zr30camera/lib/python3.10/site-packages/zr30camera/siyi_sdk/utils.py to utils.cpython-310.pyc
+[0.895s] byte-compiling /home/josep/robotics/CatamaranDependencies/install/zr30camera/lib/python3.10/site-packages/zr30camera/siyi_sdk/siyi_message.py to siyi_message.cpython-310.pyc
+[0.896s] byte-compiling /home/josep/robotics/CatamaranDependencies/install/zr30camera/lib/python3.10/site-packages/zr30camera/siyi_sdk/tests/test_gimbal_rotation.py to test_gimbal_rotation.cpython-310.pyc
+[0.897s] byte-compiling /home/josep/robotics/CatamaranDependencies/install/zr30camera/lib/python3.10/site-packages/zr30camera/siyi_sdk/tests/test_get_gimbal_info.py to test_get_gimbal_info.cpython-310.pyc
+[0.898s] byte-compiling /home/josep/robotics/CatamaranDependencies/install/zr30camera/lib/python3.10/site-packages/zr30camera/siyi_sdk/tests/siyi_sdk.py to siyi_sdk.cpython-310.pyc
+[0.900s] byte-compiling /home/josep/robotics/CatamaranDependencies/install/zr30camera/lib/python3.10/site-packages/zr30camera/siyi_sdk/tests/test_get_fw_ver.py to test_get_fw_ver.cpython-310.pyc
+[0.900s] byte-compiling /home/josep/robotics/CatamaranDependencies/install/zr30camera/lib/python3.10/site-packages/zr30camera/siyi_sdk/tests/test_rtsp.py to test_rtsp.cpython-310.pyc
+[0.900s] byte-compiling /home/josep/robotics/CatamaranDependencies/install/zr30camera/lib/python3.10/site-packages/zr30camera/siyi_sdk/tests/udp_server.py to udp_server.cpython-310.pyc
+[0.900s] byte-compiling /home/josep/robotics/CatamaranDependencies/install/zr30camera/lib/python3.10/site-packages/zr30camera/siyi_sdk/tests/test_center_gimbal.py to test_center_gimbal.cpython-310.pyc
+[0.901s] byte-compiling /home/josep/robotics/CatamaranDependencies/install/zr30camera/lib/python3.10/site-packages/zr30camera/siyi_sdk/tests/test_from_rtsp_to_rtmp.py to test_from_rtsp_to_rtmp.cpython-310.pyc
+[0.901s] byte-compiling /home/josep/robotics/CatamaranDependencies/install/zr30camera/lib/python3.10/site-packages/zr30camera/siyi_sdk/tests/test_fpv_mode.py to test_fpv_mode.cpython-310.pyc
+[0.901s] byte-compiling /home/josep/robotics/CatamaranDependencies/install/zr30camera/lib/python3.10/site-packages/zr30camera/siyi_sdk/tests/utils.py to utils.cpython-310.pyc
+[0.901s] byte-compiling /home/josep/robotics/CatamaranDependencies/install/zr30camera/lib/python3.10/site-packages/zr30camera/siyi_sdk/tests/test_lock_mode.py to test_lock_mode.cpython-310.pyc
+[0.901s] byte-compiling /home/josep/robotics/CatamaranDependencies/install/zr30camera/lib/python3.10/site-packages/zr30camera/siyi_sdk/tests/test_absolute_zoom.py to test_absolute_zoom.cpython-310.pyc
+[0.902s] byte-compiling /home/josep/robotics/CatamaranDependencies/install/zr30camera/lib/python3.10/site-packages/zr30camera/siyi_sdk/tests/siyi_message.py to siyi_message.cpython-310.pyc
+[0.903s] byte-compiling /home/josep/robotics/CatamaranDependencies/install/zr30camera/lib/python3.10/site-packages/zr30camera/siyi_sdk/tests/test_follow_mode.py to test_follow_mode.cpython-310.pyc
+[0.903s] byte-compiling /home/josep/robotics/CatamaranDependencies/install/zr30camera/lib/python3.10/site-packages/zr30camera/siyi_sdk/tests/test_print_attitude.py to test_print_attitude.cpython-310.pyc
+[0.903s] byte-compiling /home/josep/robotics/CatamaranDependencies/install/zr30camera/lib/python3.10/site-packages/zr30camera/siyi_sdk/tests/test_record_video.py to test_record_video.cpython-310.pyc
+[0.903s] byte-compiling /home/josep/robotics/CatamaranDependencies/install/zr30camera/lib/python3.10/site-packages/zr30camera/siyi_sdk/tests/tkgui.py to tkgui.cpython-310.pyc
+[0.904s] byte-compiling /home/josep/robotics/CatamaranDependencies/install/zr30camera/lib/python3.10/site-packages/zr30camera/siyi_sdk/tests/test_zoom.py to test_zoom.cpython-310.pyc
+[0.904s] byte-compiling /home/josep/robotics/CatamaranDependencies/install/zr30camera/lib/python3.10/site-packages/zr30camera/siyi_sdk/tests/crc16_python.py to crc16_python.cpython-310.pyc
+[0.904s] byte-compiling /home/josep/robotics/CatamaranDependencies/install/zr30camera/lib/python3.10/site-packages/zr30camera/siyi_sdk/tests/__init__.py to __init__.cpython-310.pyc
+[0.905s] byte-compiling /home/josep/robotics/CatamaranDependencies/install/zr30camera/lib/python3.10/site-packages/zr30camera/siyi_sdk/tests/cameras.py to cameras.cpython-310.pyc
+[0.905s] byte-compiling /home/josep/robotics/CatamaranDependencies/install/zr30camera/lib/python3.10/site-packages/zr30camera/siyi_sdk/tests/test_set_angles.py to test_set_angles.cpython-310.pyc
+[0.905s] byte-compiling /home/josep/robotics/CatamaranDependencies/install/zr30camera/lib/python3.10/site-packages/zr30camera/siyi_sdk/tests/test_rtmp_stream.py to test_rtmp_stream.cpython-310.pyc
+[0.905s] byte-compiling /home/josep/robotics/CatamaranDependencies/install/zr30camera/lib/python3.10/site-packages/zr30camera/siyi_sdk/tests/test_get_hw_id.py to test_get_hw_id.cpython-310.pyc
+[0.905s] byte-compiling /home/josep/robotics/CatamaranDependencies/install/zr30camera/lib/python3.10/site-packages/zr30camera/siyi_sdk/crc16_python.py to crc16_python.cpython-310.pyc
+[0.906s] byte-compiling /home/josep/robotics/CatamaranDependencies/install/zr30camera/lib/python3.10/site-packages/zr30camera/siyi_sdk/__init__.py to __init__.cpython-310.pyc
+[0.906s] byte-compiling /home/josep/robotics/CatamaranDependencies/install/zr30camera/lib/python3.10/site-packages/zr30camera/siyi_sdk/cameras.py to cameras.cpython-310.pyc
+[0.906s] byte-compiling /home/josep/robotics/CatamaranDependencies/install/zr30camera/lib/python3.10/site-packages/zr30camera/siyi_sdk/stream.py to stream.cpython-310.pyc
+[0.907s] byte-compiling /home/josep/robotics/CatamaranDependencies/install/zr30camera/lib/python3.10/site-packages/zr30camera/siyi_sdk/siyi_sdk.bak.py to siyi_sdk.bak.cpython-310.pyc
+[0.909s] running install_data
+[0.909s] creating /home/josep/robotics/CatamaranDependencies/install/zr30camera/share/ament_index
+[0.909s] creating /home/josep/robotics/CatamaranDependencies/install/zr30camera/share/ament_index/resource_index
+[0.909s] creating /home/josep/robotics/CatamaranDependencies/install/zr30camera/share/ament_index/resource_index/packages
+[0.909s] copying resource/zr30camera -> /home/josep/robotics/CatamaranDependencies/install/zr30camera/share/ament_index/resource_index/packages
+[0.909s] copying package.xml -> /home/josep/robotics/CatamaranDependencies/install/zr30camera/share/zr30camera
+[0.910s] creating /home/josep/robotics/CatamaranDependencies/install/zr30camera/share/zr30camera/launch
+[0.910s] copying launch/zr30camera_launch.py -> /home/josep/robotics/CatamaranDependencies/install/zr30camera/share/zr30camera/launch
+[0.910s] running install_egg_info
+[0.911s] Copying ../build/zr30camera/zr30camera.egg-info to /home/josep/robotics/CatamaranDependencies/install/zr30camera/lib/python3.10/site-packages/zr30camera-0.0.0-py3.10.egg-info
+[0.911s] running install_scripts
+[0.925s] Installing cam_teleop script to /home/josep/robotics/CatamaranDependencies/install/zr30camera/lib/zr30camera
+[0.926s] Installing controller script to /home/josep/robotics/CatamaranDependencies/install/zr30camera/lib/zr30camera
+[0.926s] Installing stream script to /home/josep/robotics/CatamaranDependencies/install/zr30camera/lib/zr30camera
+[0.926s] writing list of installed files to '/home/josep/robotics/CatamaranDependencies/build/zr30camera/install.log'
+[0.948s] Invoked command in '/home/josep/robotics/CatamaranDependencies/siyi_camera_controller' returned '0': PYTHONPATH=/home/josep/robotics/CatamaranDependencies/build/zr30camera/prefix_override:/home/josep/.local/lib/python3.10/site-packages/colcon_core/task/python/colcon_distutils_commands:/home/josep/robotics/CatamaranDependencies/install/zr30camera/lib/python3.10/site-packages:${PYTHONPATH} /usr/bin/python3 -W ignore:setup.py install is deprecated -W ignore:easy_install command is deprecated setup.py egg_info --egg-base ../build/zr30camera build --build-base /home/josep/robotics/CatamaranDependencies/build/zr30camera/build install --record /home/josep/robotics/CatamaranDependencies/build/zr30camera/install.log --single-version-externally-managed install_data

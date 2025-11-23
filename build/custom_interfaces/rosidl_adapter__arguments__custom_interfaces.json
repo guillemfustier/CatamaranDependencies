@@ -1,0 +1,9 @@
+{
+  "package_name": "custom_interfaces",
+  "non_idl_tuples": [
+    "/home/josep/robotics/CatamaranDependencies/custom_interfaces:msg/SetPosition.msg",
+    "/home/josep/robotics/CatamaranDependencies/custom_interfaces:msg/SetVelocity.msg",
+    "/home/josep/robotics/CatamaranDependencies/custom_interfaces:srv/GetPosition.srv",
+    "/home/josep/robotics/CatamaranDependencies/custom_interfaces:srv/GetVelocity.srv"
+  ]
+}
