@@ -58,7 +58,7 @@
 // Default settings
 #define BAUDRATE 57600 // TODO: Es esto verdad?
 #define DEFAULT_DEVICE_NAME "/dev/ttyUSB0" // ls /dev/ttyUSB* to find the correct device name
-#define VELOCITY_UNIT 0.088 // TODO: Poner bien -> rpm | See https://emanual.robotis.com/docs/en/dxl/x/xl330-m077/#velocity-limit for more details
+#define VELOCITY_UNIT 0.229 // TODO: Poner bien -> rpm | See https://emanual.robotis.com/docs/en/dxl/x/xl330-m077/#velocity-limit for more details
 
 // Robot parameters
 #define DIAMETER_ENGRANAJE 0.04 // metros
@@ -92,25 +92,17 @@ MotorController::MotorController()
     // ╔═════════════════════════════╗
     // ║   ANGLE TO MOTOR_MOVEMENT   ║
     // ╚═════════════════════════════╝
-    
+        
     rudder_angle_subscriber_ =
-    this->create_subscription<std_msgs::msg::Int32>(
-        "rudder_angle",
-        QOS_RKL10V,
-        [this](const std_msgs::msg::Int32::SharedPtr msg) -> void {
-            int angulo_grados = msg->data;
-            angulo_grados = angulo_grados - angulo_grados_iniciales;
-            angulo_grados_iniciales = angulo_grados;
+        this->create_subscription<std_msgs::msg::Int32>(
+            "rudder_angle",
+            QOS_RKL10V,
+            [this](const std_msgs::msg::Int32::SharedPtr msg) -> void {
+                int angulo_grados = msg->data;
+                angulo_grados = angulo_grados - angulo_grados_iniciales;
+                angulo_grados_iniciales = angulo_grados;
 
-            // Revisar
                 double alpha = angulo_grados * M_PI / 180.0;
-                if (angulo_grados > 40){
-                    RCLCPP_INFO(this->get_logger(), "Se ha superado el valor límite del angulo");
-                    angulo_grados = 40;
-                } else if  (angulo_grados < -40){
-                    RCLCPP_INFO(this->get_logger(), "Se ha superado el valor límite del angulo");
-                    angulo_grados = -40;
-                }
                 double alpha_abs = std::abs(alpha);
 
                 // Constantes del sistema
@@ -132,15 +124,6 @@ MotorController::MotorController()
                 // Cálculo de vueltas y tiempo
                 double circunferencia = M_PI * DIAMETER_ENGRANAJE;
                 double vueltas = d_final / circunferencia;
-                
-                //Modificado a partir de aquí
-                // Ej queremos pasar de -15 a -20 --> -20 - (-15) = -5
-                // Ej queremos pasar de -15 a 20 --> 20 - (-15) = 35
-                // Ej queremos pasar de 20 a -15 --> -15 - 20 = -35
-                // Ej queremos pasar de 15 a 20 --> 20 - (15) = 5
-                
-                
-                
                 double tiempo = std::abs(vueltas / RPM_MAXIMO) * 60.0; // tiempo siempre positivo
 
                 RCLCPP_INFO(this->get_logger(), "Ángulo: %d grados, radianes: %.3f, x: %.3f, y: %.3f, d_final: %.3f m, tiempo: %.3f s", angulo_grados, alpha, x, y, d_final, tiempo);
@@ -156,7 +139,7 @@ MotorController::MotorController()
                 dxl_comm_result = packetHandler->write4ByteTxRx(
                     portHandler,
                     ID_HERRAMIENTA,
-                    ADDR_GOAL_POSITION,
+                    ADDR_GOAL_VELOCITY,
                     velocidad_maxima,
                     &dxl_error
                 );
@@ -174,7 +157,7 @@ MotorController::MotorController()
                 dxl_comm_result = packetHandler->write4ByteTxRx(
                     portHandler,
                     ID_HERRAMIENTA,
-                    ADDR_GOAL_POSITION,
+                    ADDR_GOAL_VELOCITY,
                     0,
                     &dxl_error
                 );
@@ -288,7 +271,7 @@ void setupDynamixel(uint8_t dxl_id) {
         portHandler, 
         dxl_id, 
         ADDR_OPERATING_MODE, 
-        4, 
+        1, 
         &dxl_error
     );
 
