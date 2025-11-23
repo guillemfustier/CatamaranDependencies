@@ -125,6 +125,7 @@ MotorController::MotorController()
                 double circunferencia = M_PI * DIAMETER_ENGRANAJE;
                 double vueltas = d_final / circunferencia;
                 double tiempo = std::abs(vueltas / RPM_MAXIMO) * 60.0; // tiempo siempre positivo
+                tiempo = std::round(tiempo * 100.0) / 100.0; // limitar a 2 decimales
 
                 RCLCPP_INFO(this->get_logger(), "Ángulo: %d grados, radianes: %.3f, x: %.3f, y: %.3f, d_final: %.3f m, tiempo: %.3f s", angulo_grados, alpha, x, y, d_final, tiempo);
 
