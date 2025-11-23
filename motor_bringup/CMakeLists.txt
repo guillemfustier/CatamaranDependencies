@@ -16,6 +16,7 @@ find_package(std_msgs REQUIRED)
 include_directories(include)
 
 add_executable(rudder_angle_controller src/rudder_angle_controller.cpp)
+add_executable(motor_angle_controller src/rudder_angle_controller_abs.cpp)
 
 ament_target_dependencies(rudder_angle_controller 
   rclcpp
@@ -25,8 +26,17 @@ ament_target_dependencies(rudder_angle_controller
   std_msgs
 )
 
+ament_target_dependencies(rudder_angle_controller_abs 
+  rclcpp
+  dynamixel_sdk
+  custom_interfaces
+  geometry_msgs
+  std_msgs
+)
+
 install (TARGETS
   rudder_angle_controller
+  rudder_angle_controller_abs
   DESTINATION lib/${PROJECT_NAME}
 )
 
