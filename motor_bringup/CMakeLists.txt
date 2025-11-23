@@ -17,6 +17,7 @@ include_directories(include)
 
 add_executable(rudder_angle_controller src/rudder_angle_controller.cpp)
 add_executable(rudder_angle_controller_abs src/rudder_angle_controller_abs.cpp)
+add_executable(rudder_angle_publisher src/rudder_angle_publisher.cpp)
 
 ament_target_dependencies(rudder_angle_controller 
   rclcpp
@@ -34,9 +35,15 @@ ament_target_dependencies(rudder_angle_controller_abs
   std_msgs
 )
 
+ament_target_dependencies(rudder_angle_publisher 
+  rclcpp
+  std_msgs
+)
+
 install (TARGETS
   rudder_angle_controller
   rudder_angle_controller_abs
+  rudder_angle_publisher
   DESTINATION lib/${PROJECT_NAME}
 )
 

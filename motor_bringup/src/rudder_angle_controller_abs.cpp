@@ -74,7 +74,7 @@ dynamixel::PacketHandler *packetHandler;
 // Error handling
 int dxl_comm_result = COMM_TX_FAIL;
 uint8_t dxl_error = 0;
-int vueltas_iniciales = 0;
+int angulo_grados_iniciales = 0;
 
 
 MotorController::MotorController()
@@ -92,14 +92,17 @@ MotorController::MotorController()
     // ╔═════════════════════════════╗
     // ║   ANGLE TO MOTOR_MOVEMENT   ║
     // ╚═════════════════════════════╝
-        
+    
     rudder_angle_subscriber_ =
-        this->create_subscription<std_msgs::msg::Int32>(
-            "rudder_angle",
-            QOS_RKL10V,
-            [this](const std_msgs::msg::Int32::SharedPtr msg) -> void {
-                int angulo_grados = msg->data;
-                // Revisar
+    this->create_subscription<std_msgs::msg::Int32>(
+        "rudder_angle",
+        QOS_RKL10V,
+        [this](const std_msgs::msg::Int32::SharedPtr msg) -> void {
+            int angulo_grados = msg->data;
+            angulo_grados = angulo_grados - angulo_grados_iniciales;
+            angulo_grados_iniciales = angulo_grados;
+
+            // Revisar
                 double alpha = angulo_grados * M_PI / 180.0;
                 if (angulo_grados > 40){
                     RCLCPP_INFO(this->get_logger(), "Se ha superado el valor límite del angulo");
@@ -136,9 +139,6 @@ MotorController::MotorController()
                 // Ej queremos pasar de 20 a -15 --> -15 - 20 = -35
                 // Ej queremos pasar de 15 a 20 --> 20 - (15) = 5
                 
-                vueltas = vueltas - vueltas_iniciales;
-                vueltas_iniciales = vueltas;
-                double vueltas_resultante = vueltas * 360 * 0.088; //TODO: Revisar conversion. El 0.088 es el valor que da la web
                 
                 
                 double tiempo = std::abs(vueltas / RPM_MAXIMO) * 60.0; // tiempo siempre positivo
@@ -157,7 +157,7 @@ MotorController::MotorController()
                     portHandler,
                     ID_HERRAMIENTA,
                     ADDR_GOAL_POSITION,
-                    vueltas_resultante,
+                    velocidad_maxima,
                     &dxl_error
                 );
                 if (dxl_comm_result != COMM_SUCCESS) {
