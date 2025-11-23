@@ -103,10 +103,10 @@ MotorController::MotorController()
                 double alpha = angulo_grados * M_PI / 180.0;
                 if (angulo_grados > 40){
                     RCLCPP_INFO(this->get_logger(), "Se ha superado el valor límite del angulo");
-                    angulos_grados = 40;
-                } else if  (angulos_grados < -40){
+                    angulo_grados = 40;
+                } else if  (angulo_grados < -40){
                     RCLCPP_INFO(this->get_logger(), "Se ha superado el valor límite del angulo");
-                    angulos_grados = -40;
+                    angulo_grados = -40;
                 }
                 double alpha_abs = std::abs(alpha);
 
@@ -141,18 +141,18 @@ MotorController::MotorController()
                 double vueltas_resultante = vueltas * 360 * 0.088; //TODO: Revisar conversion. El 0.088 es el valor que da la web
                 
                 
-                //double tiempo = std::abs(vueltas / RPM_MAXIMO) * 60.0; // tiempo siempre positivo
+                double tiempo = std::abs(vueltas / RPM_MAXIMO) * 60.0; // tiempo siempre positivo
 
                 RCLCPP_INFO(this->get_logger(), "Ángulo: %d grados, radianes: %.3f, x: %.3f, y: %.3f, d_final: %.3f m, tiempo: %.3f s", angulo_grados, alpha, x, y, d_final, tiempo);
 
                 // Enviar velocidad máxima al motor (ejemplo para un motor, id_herramienta)
-                //int32_t velocidad_maxima = static_cast<int32_t>(RPM_MAXIMO / VELOCITY_UNIT);
-//                 int32_t limite = 1023; // Para XW540-T260
-//                 if (velocidad_maxima > limite) velocidad_maxima = limite;
-//                 if (velocidad_maxima < -limite) velocidad_maxima = -limite;
-//                 if (vueltas < 0) {
-//                     velocidad_maxima = -velocidad_maxima; // invierte el sentido
-//                 }
+                int32_t velocidad_maxima = static_cast<int32_t>(RPM_MAXIMO / VELOCITY_UNIT);
+                int32_t limite = 1023; // Para XW540-T260
+                if (velocidad_maxima > limite) velocidad_maxima = limite;
+                if (velocidad_maxima < -limite) velocidad_maxima = -limite;
+                if (vueltas < 0) {
+                    velocidad_maxima = -velocidad_maxima; // invierte el sentido
+                }
                 dxl_comm_result = packetHandler->write4ByteTxRx(
                     portHandler,
                     ID_HERRAMIENTA,

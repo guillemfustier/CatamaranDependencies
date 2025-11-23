@@ -16,7 +16,7 @@ find_package(std_msgs REQUIRED)
 include_directories(include)
 
 add_executable(rudder_angle_controller src/rudder_angle_controller.cpp)
-add_executable(motor_angle_controller src/rudder_angle_controller_abs.cpp)
+add_executable(rudder_angle_controller_abs src/rudder_angle_controller_abs.cpp)
 
 ament_target_dependencies(rudder_angle_controller 
   rclcpp
