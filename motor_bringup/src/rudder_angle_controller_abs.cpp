@@ -99,8 +99,8 @@ MotorController::MotorController()
             QOS_RKL10V,
             [this](const std_msgs::msg::Int32::SharedPtr msg) -> void {
                 int angulo_grados = msg->data;
-                angulo_grados = angulo_grados - angulo_grados_iniciales;
                 angulo_grados_iniciales = angulo_grados;
+                angulo_grados = angulo_grados - angulo_grados_iniciales;
 
                 double alpha = angulo_grados * M_PI / 180.0;
                 double alpha_abs = std::abs(alpha);
