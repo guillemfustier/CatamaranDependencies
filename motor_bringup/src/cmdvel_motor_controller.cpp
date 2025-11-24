@@ -63,7 +63,7 @@ private:
         // === CONTROL DE TIMÓN ===
         // angular.z -> rango -40 a 40 grados
         int rudder_angle = static_cast<int>(msg->angular.z * 40.0);
-        rudder_angle = std::clamp(rudder_angle, -40, 40);
+        rudder_angle = std::clamp(rudder_angle, -35, 40);    // Limitar ángulo entre -35 y 40 grados
 
         std_msgs::msg::Int32 rudder_msg;
         rudder_msg.data = rudder_angle;
@@ -74,13 +74,15 @@ private:
         double velocity = std::clamp(msg->linear.x, -1.0, 1.0);
 
         // Mapeo -1..1 -> 1100..1900 (1500 neutro)
-        uint16_t pwm = static_cast<uint16_t>(1500 + velocity * 400);
+        uint16_t pwm_1 = static_cast<uint16_t>(1500 + velocity * 400);
+        uint16_t pwm_2 = static_cast<uint16_t>(1500 - velocity * 400);
+
 
         mavros_msgs::msg::OverrideRCIn rc_msg;
         rc_msg.channels = {
-            pwm, // RC1 Motor izquierdo
+            pwm_1, // RC1 Motor izquierdo
             0,
-            pwm, // RC3 Motor derecho
+            pwm_2, // RC3 Motor derecho
             0,
             0, 0, 0, 0
         };
