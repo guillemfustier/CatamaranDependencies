@@ -102,6 +102,11 @@ MotorController::MotorController()
                 angulo_grados = angulo_grados - angulo_grados_iniciales;
                 angulo_grados_iniciales = msg->data;
 
+                if (angulo_grados == 0) {
+                    RCLCPP_INFO(this->get_logger(), "Ángulo es 0, no se mueve el motor.");
+                    return;
+                }
+
                 double alpha = angulo_grados * M_PI / 180.0;
                 double alpha_abs = std::abs(alpha);
 
