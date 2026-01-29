@@ -86,6 +86,8 @@ MotorController::MotorController()
     int8_t qos_depth = 0;
     this->get_parameter("qos_depth", qos_depth);
 
+    this->declare_parameter("device_name", DEFAULT_DEVICE_NAME);
+
     const auto QOS_RKL10V = // Defines QoS
     rclcpp::QoS(rclcpp::KeepLast(qos_depth)).reliable().durability_volatile();
 
@@ -305,12 +307,14 @@ void setupDynamixel(uint8_t dxl_id) {
     }
 
 int main(int argc, char * argv[]) {
-    
-    // Get custom device name
-    const char* deviceName = DEFAULT_DEVICE_NAME;
-    if (argc > 1) {
-        deviceName = argv[1]; 
-    }
+    rclcpp::init(argc, argv);
+    auto motorcontroller = std::make_shared<MotorController>();
+
+    // Get device name from parameter
+    std::string deviceNameString;
+    motorcontroller->get_parameter("device_name", deviceNameString);
+    const char* deviceName = deviceNameString.c_str();
+
     std::cout << "Using device: " << deviceName << std::endl;
 
     portHandler = dynamixel::PortHandler::getPortHandler(deviceName);
@@ -342,8 +346,6 @@ int main(int argc, char * argv[]) {
     // }
     setupDynamixel(ID_HERRAMIENTA);
     // Keep the node running until closed
-    rclcpp::init(argc, argv);
-    auto motorcontroller = std::make_shared<MotorController>();
     rclcpp::spin(motorcontroller);
     
     // On shutdown, disable Torque of DYNAMIXEL
