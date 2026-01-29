@@ -312,9 +312,17 @@ int main(int argc, char * argv[]) {
 
     // Get device name from parameter
     std::string deviceNameString;
-    motorcontroller->get_parameter("device_name", deviceNameString);
+    if (!motorcontroller->get_parameter("device_name", deviceNameString)) {
+        deviceNameString = DEFAULT_DEVICE_NAME;
+    }
+    
+    if (deviceNameString.empty()) {
+        deviceNameString = DEFAULT_DEVICE_NAME;
+    }
+    
     const char* deviceName = deviceNameString.c_str();
 
+    RCLCPP_INFO(motorcontroller->get_logger(), "Attempting to open Dynamixel port: %s", deviceName);
     std::cout << "Using device: " << deviceName << std::endl;
 
     portHandler = dynamixel::PortHandler::getPortHandler(deviceName);

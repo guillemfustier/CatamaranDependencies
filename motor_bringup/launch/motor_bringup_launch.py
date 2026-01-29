@@ -11,6 +11,9 @@ def generate_launch_description():
         Node(
             package='motor_bringup',
             executable='rudder_angle_controller_abs',
-            name='rudder_angle_controller_abs'
+            name='rudder_angle_controller_abs',
+            parameters=[
+                {'device_name': '/dev/ttyUSB0'}
+            ]
         )
     ])
