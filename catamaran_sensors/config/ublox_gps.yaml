@@ -1,0 +1,53 @@
+ublox_dgnss:
+  ros__parameters:
+    debug: 1
+    # Usamos serial porque en Linux ttyACM0 se comporta como puerto serie
+    transport_type: "serial"
+    serial_port: "/dev/ttyACM0"
+    serial_baud: 38400   # Baudrate por defecto de fábrica. Si falla prueba 115200 o 9600.
+    frame_id: "gps_link"
+
+    # Habilitar mensajes UBX usando los nombres que vimos en tus logs (con guiones bajos)
+    # 1 = USB, 0 = Desactivado. (CFG_MSGOUT_..._USB)
+    
+    # Posición, Velocidad y Tiempo (PVT) - El más importante
+    CFG_MSGOUT_UBX_NAV_PVT_USB: 1
+    
+    # Relación de Posición NED (útil para RTK y heading)
+    CFG_MSGOUT_UBX_NAV_RELPOSNED_USB: 1
+    
+    # Estado de los satélites
+    CFG_MSGOUT_UBX_NAV_SAT_USB: 1
+    
+    # Status general
+    CFG_MSGOUT_UBX_NAV_STATUS_USB: 1
+    
+    # --- NECESARIO PARA /fix (ublox_nav_sat_fix_hp_node) ---
+    # High Precision Position LLH (Lat/Lon/Height)
+    CFG_MSGOUT_UBX_NAV_HPPOSLLH_USB: 1
+    # Covariance Matrix (para calcular la incertidumbre/precisión)
+    CFG_MSGOUT_UBX_NAV_COV_USB: 1
+    
+    # --- DEBUG RTK ---
+    # Monitorizar si llegan correcciones RTCM al GPS
+    CFG_MSGOUT_UBX_RXM_RTCM_USB: 1
+    # Asegurar que el puerto USB acepta entrada RTCM3
+    CFG_USBINPROT_RTCM3X: 1
+    
+    # --- PARÁMETROS CRÍTICOS RTK (ROVER) ---
+    # Modo DGNSS: 3 = RTK Fixed (Lo fuerzo a buscar alta precision)
+    CFG_NAVHPG_DGNSSMODE: 3
+    
+    # Asegurar que somos un ROVER y no una Base Station
+    CFG_TMODE_MODE: 0 
+    
+    # Fuente de correcciones SPARTN desactivada (para no interferir con RTCM)
+    CFG_SPARTN_USE_SOURCE: 0
+
+    # Activar Beidou, Galileo, GLONASS para maximizar compatibilidad con la base
+    # (Los valores dependen de la documentacion F9, 1 suele ser enable)
+    # Si la base manda Galileo y tu lo tienes apagado, msg_used sera 0.
+    # CFG_SIGNAL_GPS_ENA: 1 (Default)
+    # CFG_SIGNAL_GLO_ENA: 1 (Default)
+    # CFG_SIGNAL_GAL_ENA: 1 (Default)
+    # CFG_SIGNAL_BDS_ENA: 1 (Default)
