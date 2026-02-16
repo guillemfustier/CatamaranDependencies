@@ -26,7 +26,7 @@ setup(
     tests_require=['pytest'],
     entry_points={
         'console_scripts': [
-            'navigator_imu_publisher = catamaran_sensors.navigator_imu_publisher:main',
+            'mavlink_bridge = catamaran_sensors.mavlink_bridge:main',
         ],
     },
 )
