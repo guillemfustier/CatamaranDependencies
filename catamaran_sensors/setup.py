@@ -27,6 +27,7 @@ setup(
     entry_points={
         'console_scripts': [
             'mavlink_bridge = catamaran_sensors.mavlink_bridge:main',
+            'tf_gps_publisher = catamaran_sensors.tf_gps_publisher:main',
         ],
     },
 )

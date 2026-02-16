@@ -22,7 +22,10 @@ def generate_launch_description():
             package='ublox_nav_sat_fix_hp_node',
             executable='ublox_nav_sat_fix_hp',
             name='ublox_nav_sat_fix_hp',
-            output='screen'
+            output='screen',
+            remappings=[
+                ('fix', '/mavlink/gps')
+            ]
         ),
 
         # 3. NTRIP Client (RTK Corrections from Internet)
