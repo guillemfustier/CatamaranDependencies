@@ -1,23 +1,29 @@
 <?xml version="1.0"?>
 <robot xmlns:xacro="http://www.ros.org/wiki/xacro" name="catamaran">
 
-  <!-- Base Link -->
-  <link name="base_link">
-    <visual>
-      <!-- Adjust rotation if your model is flipped. 
-           Common rotations: rpy="1.57 0 0" or rpy="0 0 0" -->
-      <origin rpy="0 0 0" xyz="0 0 0" />
-      <geometry>
-        <!-- Ensure the path matches where you put the file -->
-        <mesh filename="package://catamaran_description/meshes/CatamaranAssembly.dae" scale="1 1 1"/>
-      </geometry>
-    </visual>
-    <collision>
-      <origin rpy="0 0 0" xyz="0 0 0" />
-      <geometry>
-        <mesh filename="package://catamaran_description/meshes/CatamaranAssembly.dae" scale="1 1 1"/>
-      </geometry>
-    </collision>
-  </link>
+  <!-- Definir un macro llamado catamaran_macro -->
+  <xacro:macro name="catamaran_macro" params="prefix">
+    <!-- Base Link -->
+    <link name="${prefix}base_link">
+      <visual>
+        <!-- Adjust rotation if your model is flipped. 
+            Common rotations: rpy="1.57 0 0" or rpy="0 0 0" -->
+        <origin rpy="0 0 0" xyz="0 0 0" />
+        <geometry>
+          <!-- Ensure the path matches where you put the file -->
+          <mesh filename="package://catamaran_description/meshes/CatamaranAssembly.dae" scale="1 1 1"/>
+        </geometry>
+      </visual>
+      <collision>
+        <origin rpy="0 0 0" xyz="0 0 0" />
+        <geometry>
+          <mesh filename="package://catamaran_description/meshes/CatamaranAssembly.dae" scale="1 1 1"/>
+        </geometry>
+      </collision>
+    </link>
+  </xacro:macro>
+
+  <!-- LLAMAR A LA MACRO -->
+  <xacro:catamaran_macro prefix="catamaran_"/>
 
 </robot>

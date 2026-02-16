@@ -68,18 +68,18 @@ class GPS2TF(Node):
         return float(ned), float(0)  # Convertimos a float explícitamente
 
     def publish_tf(self, x, y, z, orientation):
-        """Publica la transformada TF desde 'map' a 'blueboat_base_link'."""
+        """Publica la transformada TF desde 'map' a 'catamaran_base_link'."""
         t = TransformStamped()
         t.header.stamp = self.get_clock().now().to_msg()
         t.header.frame_id = "map"
-        t.child_frame_id = "blueboat_base_link"
+        t.child_frame_id = "catamaran_base_link"
         t.transform.translation.x = float(x)
         t.transform.translation.y = float(y)
         t.transform.translation.z = -0.2
         t.transform.rotation = orientation
 
         self.tf_broadcaster.sendTransform(t)
-        self.get_logger().info(f'TF publicada: map -> blueboat_base_link | x: {x}, y: {y}, z: {z}')
+        self.get_logger().info(f'TF publicada: map -> catamaran_base_link | x: {x}, y: {y}, z: {z}')
 
 def main(args=None):
     rclpy.init(args=args)
