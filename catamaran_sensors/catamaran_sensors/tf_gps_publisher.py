@@ -63,9 +63,21 @@ class GPS2TF(Node):
         self.orientation = msg  # Guardar la orientación actual
 
     def geodetic2ned(self, lat, lon, origin):
-        # Convierte coordenadas geodésicas (lat, lon) a coordenadas NED (x, y)
-        ned = geodesic((origin[0], origin[1]), (lat, lon)).meters
-        return float(ned), float(0)  # Convertimos a float explícitamente
+        """Convierte coordenadas geodésicas (lat, lon) a coordenadas NED (x, y).
+        x = Norte (diferencia en latitud)
+        y = Este (diferencia en longitud)
+        """
+        # Distancia Norte (x): mantenemos longitud constante
+        x = geodesic((origin[0], origin[1]), (lat, origin[1])).meters
+        if lat < origin[0]:
+            x = -x  # Sur es negativo
+
+        # Distancia Este (y): mantenemos latitud constante
+        y = geodesic((origin[0], origin[1]), (origin[0], lon)).meters
+        if lon < origin[1]:
+            y = -y  # Oeste es negativo
+
+        return float(x), float(y)
 
     def publish_tf(self, x, y, z, orientation):
         """Publica la transformada TF desde 'map' a 'catamaran_base_link'."""
