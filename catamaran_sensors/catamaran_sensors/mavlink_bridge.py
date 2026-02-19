@@ -53,7 +53,7 @@ class MAVLinkBridge(Node):
                     self.orientation_pub.publish(orientation_msg)
 
 
-                    self.get_logger().info(f"Orientación: {roll}, {pitch}, {yaw}")
+                    # self.get_logger().info(f"Orientación: {roll}, {pitch}, {yaw}")
 
 def main(args=None):
     rclpy.init(args=args)

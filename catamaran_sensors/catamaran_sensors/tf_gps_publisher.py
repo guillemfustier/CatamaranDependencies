@@ -92,7 +92,7 @@ class GPS2TF(Node):
         t.transform.rotation = orientation
 
         self.tf_broadcaster.sendTransform(t)
-        self.get_logger().info(f'TF publicada: map -> catamaran_base_link | x: {x}, y: {y}, z: {z}')
+        # self.get_logger().info(f'TF publicada: map -> catamaran_base_link | x: {x}, y: {y}, z: {z}')
 
 def main(args=None):
     rclpy.init(args=args)
