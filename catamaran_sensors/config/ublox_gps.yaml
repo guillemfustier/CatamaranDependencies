@@ -44,6 +44,12 @@ ublox_dgnss:
     # Fuente de correcciones SPARTN desactivada (para no interferir con RTCM)
     CFG_SPARTN_USE_SOURCE: 0
 
+    # --- FRECUENCIA DE MUESTREO (RATE) ---
+    # Periodo de medida en milisegundos (100 ms = 10 Hz)
+    CFG_RATE_MEAS: 100
+    # Ratio de navegación (1 = una solución por cada medida)
+    CFG_RATE_NAV: 1
+
     # Activar Beidou, Galileo, GLONASS para maximizar compatibilidad con la base
     # (Los valores dependen de la documentacion F9, 1 suele ser enable)
     # Si la base manda Galileo y tu lo tienes apagado, msg_used sera 0.
