@@ -13,6 +13,10 @@ endif()
 find_package(ament_cmake_auto REQUIRED)
 ament_auto_find_build_dependencies()
 
+find_package(camera_info_manager REQUIRED)
+find_package(image_transport REQUIRED)
+find_package(cv_bridge REQUIRED)
+
 find_package(OpenCV REQUIRED)
 
 find_package(PkgConfig REQUIRED)
@@ -56,8 +60,18 @@ ament_auto_add_library(${PROJECT_NAME}_node SHARED
   src/usb_cam_node.cpp
 )
 
+target_include_directories(${PROJECT_NAME}_node PUBLIC
+  ${camera_info_manager_INCLUDE_DIRS}
+  ${image_transport_INCLUDE_DIRS}
+  ${cv_bridge_INCLUDE_DIRS}
+)
+
 target_link_libraries(${PROJECT_NAME}_node
-  ${PROJECT_NAME})
+  ${PROJECT_NAME}
+  camera_info_manager::camera_info_manager
+  image_transport::image_transport
+  cv_bridge::cv_bridge
+)
 
 ## Use node to generate an executable
 rclcpp_components_register_node(${PROJECT_NAME}_node
