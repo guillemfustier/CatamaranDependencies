@@ -2,6 +2,7 @@
 
 import rclpy
 from rclpy.node import Node
+from rclpy.qos import qos_profile_sensor_data
 from sensor_msgs.msg import NavSatFix
 from geometry_msgs.msg import Quaternion
 import tf2_ros
@@ -14,7 +15,7 @@ class GPS2TF(Node):
         super().__init__('gps_to_tf')
 
         # Suscriptores a GPS y orientación
-        self.gps_sub = self.create_subscription(NavSatFix, '/mavlink/gps', self.gps_callback, 10)
+        self.gps_sub = self.create_subscription(NavSatFix, '/mavlink/gps', self.gps_callback, qos_profile_sensor_data)
         self.orientation_sub = self.create_subscription(Quaternion, '/mavlink/orientation', self.orientation_callback, 10)
 
         # Transform Broadcaster para publicar la TF
