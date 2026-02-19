@@ -15,8 +15,8 @@ class GPS2TF(Node):
         super().__init__('gps_to_tf')
 
         # Suscriptores a GPS y orientación
-        self.gps_sub = self.create_subscription(NavSatFix, '/mavlink/gps', self.gps_callback, qos_profile_sensor_data)
-        self.orientation_sub = self.create_subscription(Quaternion, '/mavlink/orientation', self.orientation_callback, 10)
+        self.gps_sub = self.create_subscription(NavSatFix, 'mavlink/gps', self.gps_callback, qos_profile_sensor_data)
+        self.orientation_sub = self.create_subscription(Quaternion, 'mavlink/orientation', self.orientation_callback, 10)
 
         # Transform Broadcaster para publicar la TF
         self.tf_broadcaster = tf2_ros.TransformBroadcaster(self)
