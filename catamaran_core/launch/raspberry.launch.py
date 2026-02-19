@@ -30,10 +30,10 @@ def generate_launch_description():
                 executable='tf_gps_publisher',
                 name='tf_gps_publisher',
                 output='screen',
-                # parameters=[{
-                #     'origin_lat': 39.99446582,
-                #     'origin_lon': -0.07405792
-                # }]
+                parameters=[{
+                    'origin_lat': 39.99446582,
+                    'origin_lon': -0.07405792
+                }]
             ),
 
             # ------------------------------------
