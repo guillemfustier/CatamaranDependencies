@@ -60,7 +60,7 @@ Visualization Manager:
         Durability Policy: Volatile
         History Policy: Keep Last
         Reliability Policy: Reliable
-        Value: /robot_description
+        Value: /catamaran/robot_description
       Enabled: true
       Links:
         All Links Enabled: true
@@ -86,13 +86,19 @@ Visualization Manager:
       Frame Timeout: 15
       Frames:
         All Enabled: true
+        catamaran_base_link:
+          Value: true
+        map:
+          Value: true
       Marker Scale: 1
       Name: TF
       Show Arrows: true
       Show Axes: true
       Show Names: false
       Tree:
-        {}
+        map:
+          catamaran_base_link:
+            {}
       Update Interval: 0
       Value: true
   Enabled: true
@@ -141,25 +147,25 @@ Visualization Manager:
   Views:
     Current:
       Class: rviz_default_plugins/Orbit
-      Distance: 5.277319431304932
+      Distance: 20.209917068481445
       Enable Stereo Rendering:
         Stereo Eye Separation: 0.05999999865889549
         Stereo Focal Distance: 1
         Swap Stereo Eyes: false
         Value: false
       Focal Point:
-        X: 0
-        Y: 0
-        Z: 0
+        X: -4.12470817565918
+        Y: 3.89532470703125
+        Z: -4.117466926574707
       Focal Shape Fixed Size: true
       Focal Shape Size: 0.05000000074505806
       Invert Z Axis: false
       Name: Current View
       Near Clip Distance: 0.009999999776482582
-      Pitch: 0.4553983211517334
+      Pitch: 0.45539844036102295
       Target Frame: <Fixed Frame>
       Value: Orbit (rviz)
-      Yaw: 0.7053980827331543
+      Yaw: 1.0353977680206299
     Saved: ~
 Window Geometry:
   Displays:

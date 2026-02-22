@@ -10,18 +10,6 @@ def generate_launch_description():
     catamaran_ns = GroupAction(
         actions=[
             PushRosNamespace('catamaran'),
-
-            # ------------------------------------
-            # 1. Puente MAVROS APM - Raspberry
-            # ------------------------------------
-            IncludeLaunchDescription(
-                AnyLaunchDescriptionSource([
-                    FindPackageShare("mavros"), '/launch/apm.launch'
-                ]),
-                launch_arguments={
-                    'fcu_url': 'udp://127.0.0.1:14550@'
-                }.items()
-            ),
             
             # ------------------------------------
             # 2. Publicar Orientation - Raspberry
@@ -48,6 +36,18 @@ def generate_launch_description():
                     'origin_lat': 39.99446582,
                     'origin_lon': -0.07405792
                 }]
+            ),
+
+            # ------------------------------------
+            # 1. Puente MAVROS APM - Raspberry
+            # ------------------------------------
+            IncludeLaunchDescription(
+                AnyLaunchDescriptionSource([
+                    FindPackageShare("mavros"), '/launch/apm.launch'
+                ]),
+                launch_arguments={
+                    'fcu_url': 'udp://127.0.0.1:14550@'
+                }.items()
             )
         ]
     )
