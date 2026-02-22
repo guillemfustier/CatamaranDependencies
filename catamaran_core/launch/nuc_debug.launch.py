@@ -85,24 +85,24 @@ def generate_launch_description():
             #     ])
             # ),
 
-            # ------------------------------------
-            # 5. Cámara Siyi - NUC
-            # ------------------------------------
-            Node(
-                package='zr30camera',
-                executable='controller',
-                name='zr30_controller',
-                output='screen'
-            ),
-            Node(
-                package='zr30camera',
-                executable='stream',
-                name='zr30_stream',
-                output='screen',
-                remappings=[
-                    ('/ZR30/camera_stream', 'siyi_camera/image_raw') # Relativo: /catamaran/siyi_camera/...
-                ]
-            ),
+            # # ------------------------------------
+            # # 5. Cámara Siyi - NUC
+            # # ------------------------------------
+            # Node(
+            #     package='zr30camera',
+            #     executable='controller',
+            #     name='zr30_controller',
+            #     output='screen'
+            # ),
+            # Node(
+            #     package='zr30camera',
+            #     executable='stream',
+            #     name='zr30_stream',
+            #     output='screen',
+            #     remappings=[
+            #         ('/ZR30/camera_stream', 'siyi_camera/image_raw') # Relativo: /catamaran/siyi_camera/...
+            #     ]
+            # ),
 
             # ------------------------------------
             # 6. Cámara USB: - NUC
