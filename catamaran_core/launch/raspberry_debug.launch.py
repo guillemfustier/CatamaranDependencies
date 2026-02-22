@@ -1,8 +1,6 @@
 from launch import LaunchDescription
-from launch.actions import GroupAction, IncludeLaunchDescription
-from launch.launch_description_sources import AnyLaunchDescriptionSource
+from launch.actions import GroupAction
 from launch_ros.actions import Node, PushRosNamespace
-from launch_ros.substitutions import FindPackageShare
 
 def generate_launch_description():
     
@@ -11,20 +9,8 @@ def generate_launch_description():
         actions=[
             PushRosNamespace('catamaran'),
 
-            # # ------------------------------------
-            # # 1. Puente MAVROS APM - Raspberry
-            # # ------------------------------------
-            # IncludeLaunchDescription(
-            #     AnyLaunchDescriptionSource([
-            #         FindPackageShare("mavros"), '/launch/apm.launch'
-            #     ]),
-            #     launch_arguments={
-            #         'fcu_url': 'udp://127.0.0.1:14550@'
-            #     }.items()
-            # ),
-            
             # ------------------------------------
-            # 2. Publicar Orientation - Raspberry
+            # 1. Publicar Orientation - Raspberry
             # ------------------------------------
             # Nodo MAVLink Bridge
             Node(
@@ -44,10 +30,20 @@ def generate_launch_description():
                 executable='tf_gps_publisher',
                 name='tf_gps_publisher',
                 output='screen',
-                parameters=[{
-                    'origin_lat': 39.99446582,
-                    'origin_lon': -0.07405792
-                }]
+                # parameters=[{
+                #     'origin_lat': 39.99446582,
+                #     'origin_lon': -0.07405792
+                # }]
+            ),
+
+            # ------------------------------------
+            # 2. CMD Vel Translator - Raspberry
+            # ------------------------------------
+            Node(
+                package='motor_bringup',
+                executable='cmdvel_motor_controller',
+                name='cmdvel_motor_controller',
+                output='screen'
             )
         ]
     )
