@@ -1,6 +1,6 @@
 from launch import LaunchDescription
 from launch.actions import GroupAction, IncludeLaunchDescription
-from launch.launch_description_sources import PythonLaunchDescriptionSource
+from launch.launch_description_sources import AnyLaunchDescriptionSource
 from launch_ros.actions import Node, PushRosNamespace
 from launch_ros.substitutions import FindPackageShare
 
@@ -15,7 +15,7 @@ def generate_launch_description():
             # 1. Puente MAVROS APM - Raspberry
             # ------------------------------------
             IncludeLaunchDescription(
-                PythonLaunchDescriptionSource([
+                AnyLaunchDescriptionSource([
                     FindPackageShare("mavros"), '/launch/apm.launch'
                 ]),
                 launch_arguments={
