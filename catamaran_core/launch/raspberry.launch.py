@@ -22,7 +22,7 @@ def generate_launch_description():
                 output='screen',
                 parameters=[{
                     'mavlink_ip': '0.0.0.0',  
-                    'mavlink_port': 14551
+                    'mavlink_port': 14550
                 }]
             ),
 
@@ -49,7 +49,7 @@ def generate_launch_description():
                             FindPackageShare("mavros"), '/launch/apm.launch'
                         ]),
                         launch_arguments={
-                            'fcu_url': 'udp://127.0.0.1:14550@'
+                            'fcu_url': 'udp://127.0.0.1:14551@'
                         }.items()
                     )
                 ]
