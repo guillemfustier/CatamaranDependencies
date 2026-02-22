@@ -22,7 +22,7 @@ def generate_launch_description():
                 output='screen',
                 parameters=[{
                     'mavlink_ip': '0.0.0.0',  
-                    'mavlink_port': 14550
+                    'mavlink_port': 14551
                 }]
             ),
 
