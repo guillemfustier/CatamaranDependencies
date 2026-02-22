@@ -3,6 +3,7 @@ from launch.actions import GroupAction, IncludeLaunchDescription
 from launch.launch_description_sources import AnyLaunchDescriptionSource
 from launch_ros.actions import Node, PushRosNamespace
 from launch_ros.substitutions import FindPackageShare
+import time
 
 def generate_launch_description():
     
@@ -37,6 +38,8 @@ def generate_launch_description():
                     'origin_lon': -0.07405792
                 }]
             ),
+
+            time.sleep(5),  # Esperar 5 segundos para asegurar que el puente MAVLink esté listo 
 
             # ------------------------------------
             # 1. Puente MAVROS APM - Raspberry
