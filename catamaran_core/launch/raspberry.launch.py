@@ -1,9 +1,8 @@
 from launch import LaunchDescription
-from launch.actions import GroupAction, IncludeLaunchDescription
+from launch.actions import GroupAction, IncludeLaunchDescription, TimerAction
 from launch.launch_description_sources import AnyLaunchDescriptionSource
 from launch_ros.actions import Node, PushRosNamespace
 from launch_ros.substitutions import FindPackageShare
-import time
 
 def generate_launch_description():
     
@@ -39,18 +38,21 @@ def generate_launch_description():
                 }]
             ),
 
-            time.sleep(5),  # Esperar 5 segundos para asegurar que el puente MAVLink esté listo 
-
             # ------------------------------------
-            # 1. Puente MAVROS APM - Raspberry
+            # 1. Puente MAVROS APM - Raspberry (Delay 5s)
             # ------------------------------------
-            IncludeLaunchDescription(
-                AnyLaunchDescriptionSource([
-                    FindPackageShare("mavros"), '/launch/apm.launch'
-                ]),
-                launch_arguments={
-                    'fcu_url': 'udp://127.0.0.1:14550@'
-                }.items()
+            TimerAction(
+                period=5.0,
+                actions=[
+                    IncludeLaunchDescription(
+                        AnyLaunchDescriptionSource([
+                            FindPackageShare("mavros"), '/launch/apm.launch'
+                        ]),
+                        launch_arguments={
+                            'fcu_url': 'udp://127.0.0.1:14550@'
+                        }.items()
+                    )
+                ]
             )
         ]
     )
