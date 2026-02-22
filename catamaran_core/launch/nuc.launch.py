@@ -1,9 +1,11 @@
 import os
 from ament_index_python.packages import get_package_share_directory
 from launch import LaunchDescription
-from launch.actions import DeclareLaunchArgument, GroupAction
-from launch_ros.actions import Node, PushRosNamespace
+from launch.actions import DeclareLaunchArgument, GroupAction, IncludeLaunchDescription
+from launch.launch_description_sources import PythonLaunchDescriptionSource
 from launch.substitutions import LaunchConfiguration
+from launch_ros.actions import Node, PushRosNamespace
+from launch_ros.substitutions import FindPackageShare
 
 def generate_launch_description():
     pkg_share_sensors = get_package_share_directory('catamaran_sensors')
@@ -25,7 +27,17 @@ def generate_launch_description():
             ),
 
             # ------------------------------------
-            # 2. Publicar GPS (Ublox + NTRIP) - NUC
+            # 2. CMD Vel Translator - NUC
+            # ------------------------------------
+            Node(
+                package='motor_bringup',
+                executable='cmdvel_motor_controller',
+                name='cmdvel_motor_controller',
+                output='screen'
+            ),
+
+            # ------------------------------------
+            # 3. Publicar GPS (Ublox + NTRIP) - NUC
             # ------------------------------------
             # Driver Node (Talks to USB)
             Node(
@@ -65,7 +77,16 @@ def generate_launch_description():
             ),
 
             # ------------------------------------
-            # 3. Cámara Siyi - NUC
+            # 4. Robot Description - NUC
+            # ------------------------------------
+            IncludeLaunchDescription(
+                PythonLaunchDescriptionSource([
+                    FindPackageShare("catamaran_description"), '/launch/robot_description.launch.py'
+                ])
+            ),
+
+            # ------------------------------------
+            # 5. Cámara Siyi - NUC
             # ------------------------------------
             Node(
                 package='zr30camera',
@@ -84,7 +105,7 @@ def generate_launch_description():
             ),
 
             # ------------------------------------
-            # 4. Cámara USB: - NUC
+            # 6. Cámara USB: - NUC
             # ------------------------------------
             Node(
                 package='usb_cam',
