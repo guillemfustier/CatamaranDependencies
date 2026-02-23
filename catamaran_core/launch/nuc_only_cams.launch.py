@@ -37,13 +37,13 @@ def generate_launch_description():
             # ------------------------------------
             # 6. Cámaras USB: - NUC
             # ------------------------------------
-            # Underwater Camera (/dev/video0)
+            # Underwater Camera - exploreHD (/dev/video2)
             Node(
                 package='usb_cam',
                 executable='usb_cam_node_exe',
                 name='usb_cam_node_underwater',
                 parameters=[{
-                    'video_device': '/dev/video0',
+                    'video_device': '/dev/video2',
                     'framerate': 30.0,
                     'pixel_format': 'mjpeg2rgb',
                     'image_width': 640,
@@ -56,13 +56,13 @@ def generate_launch_description():
                 output='screen'
             ),
 
-            # Rear Camera (/dev/video1)
+            # Rear Camera - C270 (/dev/video6)
             Node(
                 package='usb_cam',
                 executable='usb_cam_node_exe',
                 name='usb_cam_node_rear',
                 parameters=[{
-                    'video_device': '/dev/video1',
+                    'video_device': '/dev/video6',
                     'framerate': 30.0,
                     'pixel_format': 'mjpeg2rgb',
                     'image_width': 640,
@@ -75,13 +75,13 @@ def generate_launch_description():
                 output='screen'
             ),
 
-            # Front Camera (/dev/video2)
+            # Front Camera - exploreHD #2 (/dev/video4)
             Node(
                 package='usb_cam',
                 executable='usb_cam_node_exe',
                 name='usb_cam_node_front',
                 parameters=[{
-                    'video_device': '/dev/video2',
+                    'video_device': '/dev/video4',
                     'framerate': 30.0,
                     'pixel_format': 'mjpeg2rgb',
                     'image_width': 640,
