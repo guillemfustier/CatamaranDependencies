@@ -45,7 +45,7 @@ def generate_launch_description():
                 parameters=[{
                     'video_device': '/dev/video2',
                     'framerate': 30.0,
-                    'pixel_format': 'yuyv',
+                    'pixel_format': 'mjpeg2rgb',
                     'image_width': 640,
                     'image_height': 480,
                     'frame_id': 'usb_cam_optical_frame'
@@ -83,7 +83,7 @@ def generate_launch_description():
                 parameters=[{
                     'video_device': '/dev/video4',
                     'framerate': 30.0,
-                    'pixel_format': 'yuyv',
+                    'pixel_format': 'mjpeg2rgb',
                     'image_width': 640,
                     'image_height': 480,
                     'frame_id': 'front_camera_optical_frame'
