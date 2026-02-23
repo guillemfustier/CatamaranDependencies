@@ -107,23 +107,23 @@ def generate_launch_description():
             # ------------------------------------
             # 6. Cámara USB: - NUC
             # ------------------------------------
-            Node(
-                package='usb_cam',
-                executable='usb_cam_node_exe',
-                name='usb_cam_node',
-                parameters=[{
-                    'video_device': '/dev/video0',
-                    'framerate': 30.0,
-                    'pixel_format': 'mjpeg2rgb',
-                    'image_width': 640,
-                    'image_height': 480,
-                    'frame_id': 'usb_cam_optical_frame'
-                }],
-                remappings=[
-                    ('image_raw', 'underwater_camera/image_raw'), # Relativo: /catamaran/underwater_camera/...
-                ],
-                output='screen'
-            )
+            # Node(
+            #     package='usb_cam',
+            #     executable='usb_cam_node_exe',
+            #     name='usb_cam_node',
+            #     parameters=[{
+            #         'video_device': '/dev/video0',
+            #         'framerate': 30.0,
+            #         'pixel_format': 'mjpeg2rgb',
+            #         'image_width': 640,
+            #         'image_height': 480,
+            #         'frame_id': 'usb_cam_optical_frame'
+            #     }],
+            #     remappings=[
+            #         ('image_raw', 'underwater_camera/image_raw'), # Relativo: /catamaran/underwater_camera/...
+            #     ],
+            #     output='screen'
+            # )
         ]
     )
 

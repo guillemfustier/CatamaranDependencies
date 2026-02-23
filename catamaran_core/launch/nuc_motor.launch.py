@@ -34,8 +34,16 @@ def generate_launch_description():
                 executable='cmdvel_motor_controller',
                 name='cmdvel_motor_controller',
                 output='screen'
-            )
+            ),
 
+            # ------------------------------------
+            # 4. Robot Description - NUC
+            # ------------------------------------
+            IncludeLaunchDescription(
+                PythonLaunchDescriptionSource([
+                    FindPackageShare("catamaran_description"), '/launch/robot_description.launch.py'
+                ])
+            )
         ]
     )
 
