@@ -42,6 +42,7 @@ def generate_launch_description():
                 package='usb_cam',
                 executable='usb_cam_node_exe',
                 name='usb_cam_node_underwater',
+                namespace='underwater_camera', 
                 parameters=[{
                     'video_device': '/dev/video2',
                     'framerate': 30.0,
@@ -50,9 +51,9 @@ def generate_launch_description():
                     'image_height': 480,
                     'frame_id': 'usb_cam_optical_frame'
                 }],
-                remappings=[
-                    ('image_raw', 'underwater_camera/image_raw'), 
-                ],
+                # remappings=[
+                #    ('image_raw', 'image_raw'), 
+                # ],
                 output='screen'
             ),
 
@@ -61,6 +62,7 @@ def generate_launch_description():
                 package='usb_cam',
                 executable='usb_cam_node_exe',
                 name='usb_cam_node_rear',
+                namespace='rear_camera',
                 parameters=[{
                     'video_device': '/dev/video6',
                     'framerate': 30.0,
@@ -69,9 +71,6 @@ def generate_launch_description():
                     'image_height': 480,
                     'frame_id': 'rear_camera_optical_frame'
                 }],
-                remappings=[
-                    ('image_raw', 'rear_camera/image_raw'), 
-                ],
                 output='screen'
             ),
 
@@ -80,6 +79,7 @@ def generate_launch_description():
                 package='usb_cam',
                 executable='usb_cam_node_exe',
                 name='usb_cam_node_front',
+                namespace='front_camera',
                 parameters=[{
                     'video_device': '/dev/video4',
                     'framerate': 30.0,
@@ -88,9 +88,6 @@ def generate_launch_description():
                     'image_height': 480,
                     'frame_id': 'front_camera_optical_frame'
                 }],
-                remappings=[
-                    ('image_raw', 'front_camera/image_raw'), 
-                ],
                 output='screen'
             )
         ]
