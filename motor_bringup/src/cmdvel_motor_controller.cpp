@@ -16,7 +16,7 @@ public:
 
         // Publisher for rudder angle
         rudder_pub_ = this->create_publisher<std_msgs::msg::Int32>(
-            "/rudder_angle", 10);
+            "rudder_angle", 10);
 
         // Publisher for RC override
         rc_override_pub_ = this->create_publisher<mavros_msgs::msg::OverrideRCIn>(

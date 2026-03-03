@@ -44,7 +44,7 @@ def generate_launch_description():
                 name='usb_cam_node_underwater',
                 namespace='underwater_camera', 
                 parameters=[{
-                    'video_device': '/dev/video2',
+                    'video_device': '/dev/video0',
                     'framerate': 30.0,
                     'pixel_format': 'mjpeg2rgb',
                     'image_width': 640,

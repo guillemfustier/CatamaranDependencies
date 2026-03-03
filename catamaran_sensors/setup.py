@@ -28,6 +28,7 @@ setup(
         'console_scripts': [
             'mavlink_bridge = catamaran_sensors.mavlink_bridge:main',
             'tf_gps_publisher = catamaran_sensors.tf_gps_publisher:main',
+            'gps_republisher = catamaran_sensors.gps_republisher:main',
         ],
     },
 )

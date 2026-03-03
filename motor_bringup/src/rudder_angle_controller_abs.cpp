@@ -97,7 +97,7 @@ MotorController::MotorController()
         
     rudder_angle_subscriber_ =
         this->create_subscription<std_msgs::msg::Int32>(
-            "/catamaran/rudder_angle",
+            "rudder_angle",
             QOS_RKL10V,
             [this](const std_msgs::msg::Int32::SharedPtr msg) -> void {
                 int angulo_grados = msg->data;
