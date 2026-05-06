@@ -18,6 +18,8 @@ include_directories(include)
 
 add_executable(rudder_angle_controller src/rudder_angle_controller.cpp)
 add_executable(rudder_angle_controller_abs src/rudder_angle_controller_abs.cpp)
+add_executable(cable_distance_controller src/cable_distance_controller.cpp)
+add_executable(lars_height_controller src/lars_height_controller.cpp)
 add_executable(rudder_angle_publisher src/rudder_angle_publisher.cpp)
 add_executable(cmdvel_motor_controller src/cmdvel_motor_controller.cpp)
 
@@ -37,6 +39,18 @@ ament_target_dependencies(rudder_angle_controller_abs
   std_msgs
 )
 
+ament_target_dependencies(cable_distance_controller
+  rclcpp
+  dynamixel_sdk
+  std_msgs
+)
+
+ament_target_dependencies(lars_height_controller
+  rclcpp
+  dynamixel_sdk
+  std_msgs
+)
+
 ament_target_dependencies(rudder_angle_publisher 
   rclcpp
   std_msgs
@@ -53,6 +67,8 @@ ament_target_dependencies(cmdvel_motor_controller
 install (TARGETS
   rudder_angle_controller
   rudder_angle_controller_abs
+  cable_distance_controller
+  lars_height_controller
   rudder_angle_publisher
   cmdvel_motor_controller
   DESTINATION lib/${PROJECT_NAME}

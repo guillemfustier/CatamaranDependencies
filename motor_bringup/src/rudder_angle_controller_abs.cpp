@@ -65,6 +65,9 @@
 #define LONGITUD_ALETA 0.47 // metros
 #define RPM_MAXIMO 30.0 // velocidad máxima del motor
 
+constexpr double kMinRudderAngleDeg = -50.0;
+constexpr double kMaxRudderAngleDeg = 50.0;
+
 dynamixel::PortHandler *portHandler;
 dynamixel::PacketHandler *packetHandler;
 
@@ -74,11 +77,17 @@ dynamixel::PacketHandler *packetHandler;
 // Error handling
 int dxl_comm_result = COMM_TX_FAIL;
 uint8_t dxl_error = 0;
-int angulo_grados_iniciales = 0;
 
 
 MotorController::MotorController()
-: Node("motor_angle_controller") {
+: Node("motor_angle_controller"),
+  current_angle_deg_(0.0),
+  target_angle_deg_(0.0),
+  motion_start_angle_deg_(0.0),
+  motion_goal_angle_deg_(0.0),
+  motion_duration_s_(0.0),
+  motion_active_(false),
+  active_velocity_command_(0) {
 
     RCLCPP_INFO(this->get_logger(), "Motor Controller node started");
     
@@ -91,6 +100,12 @@ MotorController::MotorController()
     const auto QOS_RKL10V = // Defines QoS
     rclcpp::QoS(rclcpp::KeepLast(qos_depth)).reliable().durability_volatile();
 
+    control_timer_ = this->create_wall_timer(
+        std::chrono::milliseconds(20),
+        [this]() {
+            this->processMotion();
+        });
+
     // ╔═════════════════════════════╗
     // ║   ANGLE TO MOTOR_MOVEMENT   ║
     // ╚═════════════════════════════╝
@@ -100,82 +115,18 @@ MotorController::MotorController()
             "rudder_angle",
             QOS_RKL10V,
             [this](const std_msgs::msg::Int32::SharedPtr msg) -> void {
-                int angulo_grados = msg->data;
-                angulo_grados = angulo_grados - angulo_grados_iniciales;
-                angulo_grados_iniciales = msg->data;
+                const double requested_angle_deg = static_cast<double>(msg->data);
+                target_angle_deg_ = std::clamp(requested_angle_deg, kMinRudderAngleDeg, kMaxRudderAngleDeg);
 
-                if (angulo_grados == 0) {
-                    RCLCPP_INFO(this->get_logger(), "Ángulo es 0, no se mueve el motor.");
-                    return;
+                if (target_angle_deg_ != requested_angle_deg) {
+                    RCLCPP_WARN(
+                        this->get_logger(),
+                        "Ángulo solicitado %.3f fuera de rango, limitado a %.3f grados",
+                        requested_angle_deg,
+                        target_angle_deg_);
                 }
 
-                double alpha = angulo_grados * M_PI / 180.0;
-                double alpha_abs = std::abs(alpha);
-
-                // Constantes del sistema
-                const double l = 0.37;
-                const double R = 0.3;
-                const double x_c = 0.0;    // En teoría es 0.0135
-                const double y_c = -0.385;
-
-                // Cálculos auxiliares
-                double y = y_c + cos(alpha_abs) * R;
-                double x = x_c + sin(alpha_abs) * R;
-
-                // Dos soluciones para d
-                double d = sqrt(l * l - y * y);
-
-                double d_final = abs(d - 0.360) + x; // Posición neutra a 0.235 m + 0.125 m del motor descentrado
-                d_final = alpha  < 0 ? -d_final : d_final;
-
-                // Cálculo de vueltas y tiempo
-                double circunferencia = M_PI * DIAMETER_ENGRANAJE;
-                double vueltas = d_final / circunferencia;
-                double tiempo = std::abs(vueltas / RPM_MAXIMO) * 60.0; // tiempo siempre positivo
-                tiempo = std::round(tiempo * 100.0) / 100.0; // limitar a 2 decimales
-
-                RCLCPP_INFO(this->get_logger(), "Ángulo: %d grados, radianes: %.3f, x: %.3f, y: %.3f, d_final: %.3f m, tiempo: %.3f s", angulo_grados, alpha, x, y, d_final, tiempo);
-
-                // Enviar velocidad máxima al motor (ejemplo para un motor, id_herramienta)
-                int32_t velocidad_maxima = static_cast<int32_t>(RPM_MAXIMO / VELOCITY_UNIT);
-                int32_t limite = 1023; // Para XW540-T260
-                if (velocidad_maxima > limite) velocidad_maxima = limite;
-                if (velocidad_maxima < -limite) velocidad_maxima = -limite;
-                if (vueltas < 0) {
-                    velocidad_maxima = -velocidad_maxima; // invierte el sentido
-                }
-                dxl_comm_result = packetHandler->write4ByteTxRx(
-                    portHandler,
-                    ID_HERRAMIENTA,
-                    ADDR_GOAL_VELOCITY,
-                    velocidad_maxima,
-                    &dxl_error
-                );
-                if (dxl_comm_result != COMM_SUCCESS) {
-                    RCLCPP_ERROR(this->get_logger(), "%s", packetHandler->getTxRxResult(dxl_comm_result));
-                } else if (dxl_error != 0) {
-                    RCLCPP_ERROR(this->get_logger(), "%s", packetHandler->getRxPacketError(dxl_error));
-                } else {
-                    RCLCPP_INFO(this->get_logger(), "Motor [ID: %d] girando a velocidad máxima (%d unidades)", ID_HERRAMIENTA, velocidad_maxima);
-                }
-
-                // Esperar el tiempo calculado
-                rclcpp::sleep_for(std::chrono::duration_cast<std::chrono::nanoseconds>(std::chrono::duration<double>(tiempo)));
-                // Parar el motor
-                dxl_comm_result = packetHandler->write4ByteTxRx(
-                    portHandler,
-                    ID_HERRAMIENTA,
-                    ADDR_GOAL_VELOCITY,
-                    0,
-                    &dxl_error
-                );
-                if (dxl_comm_result != COMM_SUCCESS) {
-                    RCLCPP_ERROR(this->get_logger(), "%s", packetHandler->getTxRxResult(dxl_comm_result));
-                } else if (dxl_error != 0) {
-                    RCLCPP_ERROR(this->get_logger(), "%s", packetHandler->getRxPacketError(dxl_error));
-                } else {
-                    RCLCPP_INFO(this->get_logger(), "Motor [ID: %d] parado", ID_HERRAMIENTA);
-                }
+                replanMotion();
             }
         );
     // // ╔═════════════════════════════╗
@@ -238,6 +189,141 @@ MotorController::MotorController()
     //     };
 
     // get_position_server_ = create_service<GetPosition>("get_position", get_present_position);
+}
+
+void MotorController::processMotion() {
+    if (!motion_active_) {
+        return;
+    }
+
+    updateEstimatedAngle();
+
+    if (!motion_active_ && active_velocity_command_ != 0) {
+        stopMotor();
+    }
+}
+
+void MotorController::replanMotion() {
+    updateEstimatedAngle();
+
+    const double delta_deg = target_angle_deg_ - current_angle_deg_;
+    if (std::abs(delta_deg) < 1e-6) {
+        if (active_velocity_command_ != 0) {
+            stopMotor();
+        }
+        RCLCPP_INFO(this->get_logger(), "Ángulo ya está en %.3f grados.", current_angle_deg_);
+        return;
+    }
+
+    double alpha = delta_deg * M_PI / 180.0;
+    double alpha_abs = std::abs(alpha);
+
+    const double l = 0.37;
+    const double R = 0.3;
+    const double x_c = 0.0;
+    const double y_c = -0.385;
+
+    double y = y_c + cos(alpha_abs) * R;
+    double x = x_c + sin(alpha_abs) * R;
+    double d = sqrt(l * l - y * y);
+
+    double d_final = abs(d - 0.360) + x;
+    d_final = alpha < 0 ? -d_final : d_final;
+
+    double circunferencia = M_PI * DIAMETER_ENGRANAJE;
+    double vueltas = d_final / circunferencia;
+    double tiempo = std::abs(vueltas / RPM_MAXIMO) * 60.0;
+    tiempo = std::round(tiempo * 100.0) / 100.0;
+
+    RCLCPP_INFO(
+        this->get_logger(),
+        "Objetivo: %.3f grados | Actual: %.3f grados | Delta: %.3f grados | x: %.3f | y: %.3f | d_final: %.3f m | tiempo: %.3f s",
+        target_angle_deg_,
+        current_angle_deg_,
+        delta_deg,
+        x,
+        y,
+        d_final,
+        tiempo);
+
+    int32_t velocidad_maxima = static_cast<int32_t>(RPM_MAXIMO / VELOCITY_UNIT);
+    int32_t limite = 1023;
+    if (velocidad_maxima > limite) velocidad_maxima = limite;
+    if (velocidad_maxima < -limite) velocidad_maxima = -limite;
+    if (vueltas < 0) {
+        velocidad_maxima = -velocidad_maxima;
+    }
+
+    if (velocidad_maxima != active_velocity_command_) {
+        if (!writeGoalVelocity(velocidad_maxima)) {
+            return;
+        }
+        active_velocity_command_ = velocidad_maxima;
+    }
+
+    motion_active_ = true;
+    motion_start_time_ = this->now();
+    motion_start_angle_deg_ = current_angle_deg_;
+    motion_goal_angle_deg_ = target_angle_deg_;
+    motion_duration_s_ = tiempo;
+}
+
+void MotorController::updateEstimatedAngle() {
+    if (!motion_active_) {
+        return;
+    }
+
+    if (motion_duration_s_ <= 0.0) {
+        current_angle_deg_ = motion_goal_angle_deg_;
+        motion_active_ = false;
+        return;
+    }
+
+    const double elapsed_s = (this->now() - motion_start_time_).seconds();
+    const double progress = std::clamp(elapsed_s / motion_duration_s_, 0.0, 1.0);
+
+    current_angle_deg_ =
+        motion_start_angle_deg_ + (motion_goal_angle_deg_ - motion_start_angle_deg_) * progress;
+
+    if (progress >= 1.0) {
+        motion_active_ = false;
+    }
+}
+
+void MotorController::stopMotor() {
+    if (!writeGoalVelocity(0)) {
+        return;
+    }
+
+    active_velocity_command_ = 0;
+}
+
+bool MotorController::writeGoalVelocity(int32_t velocity) {
+    dxl_comm_result = packetHandler->write4ByteTxRx(
+        portHandler,
+        ID_HERRAMIENTA,
+        ADDR_GOAL_VELOCITY,
+        velocity,
+        &dxl_error
+    );
+
+    if (dxl_comm_result != COMM_SUCCESS) {
+        RCLCPP_ERROR(this->get_logger(), "%s", packetHandler->getTxRxResult(dxl_comm_result));
+        return false;
+    }
+
+    if (dxl_error != 0) {
+        RCLCPP_ERROR(this->get_logger(), "%s", packetHandler->getRxPacketError(dxl_error));
+        return false;
+    }
+
+    if (velocity == 0) {
+        RCLCPP_INFO(this->get_logger(), "Motor [ID: %d] parado", ID_HERRAMIENTA);
+    } else {
+        RCLCPP_INFO(this->get_logger(), "Motor [ID: %d] girando a velocidad máxima (%d unidades)", ID_HERRAMIENTA, velocity);
+    }
+
+    return true;
 }
 
 int32_t MotorController::getCurrentPosition(uint8_t id) {
