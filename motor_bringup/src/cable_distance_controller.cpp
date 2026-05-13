@@ -81,7 +81,7 @@ public:
         this->get_parameter("goal_topic", goal_topic);
         this->get_parameter("actual_topic", actual_topic);
 
-        const auto qos = rclcpp::QoS(rclcpp::KeepLast(qos_depth)).reliable().durability_volatile();
+        const auto qos = rclcpp::QoS(rclcpp::KeepLast(qos_depth)).best_effort().durability_volatile();
 
         cable_distance_publisher_ = this->create_publisher<std_msgs::msg::Float32>(actual_topic, qos);
         cable_distance_subscriber_ = this->create_subscription<std_msgs::msg::Float32>(

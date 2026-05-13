@@ -22,6 +22,7 @@ add_executable(cable_distance_controller src/cable_distance_controller.cpp)
 add_executable(lars_height_controller src/lars_height_controller.cpp)
 add_executable(rudder_angle_publisher src/rudder_angle_publisher.cpp)
 add_executable(cmdvel_motor_controller src/cmdvel_motor_controller.cpp)
+add_executable(cmdvel_mavlink_controller src/cmdvel_mavlink_controller.cpp)
 
 ament_target_dependencies(rudder_angle_controller 
   rclcpp
@@ -63,6 +64,12 @@ ament_target_dependencies(cmdvel_motor_controller
   std_msgs
 )
 
+ament_target_dependencies(cmdvel_mavlink_controller 
+  rclcpp 
+  geometry_msgs
+  std_msgs
+)
+
 
 install (TARGETS
   rudder_angle_controller
@@ -71,6 +78,7 @@ install (TARGETS
   lars_height_controller
   rudder_angle_publisher
   cmdvel_motor_controller
+  cmdvel_mavlink_controller
   DESTINATION lib/${PROJECT_NAME}
 )
 
