@@ -1,0 +1,51 @@
+node:
+  scheduler_hz: 50.0
+
+  # If the last received image is older than this value, the republisher stops
+  # publishing that camera until a new image arrives. Set <= 0 to disable.
+  max_stale_sec: 2.0
+
+defaults:
+  max_fps: 30
+  default_fps: 30
+  default_quality: 60
+  min_active_fps: 1
+  min_active_quality: 5
+
+  # Options:
+  # - scale_only: reduce image width/height, encode JPEG at high quality.
+  # - jpeg_only: keep width/height, change JPEG quality.
+  # - scale_and_jpeg: reduce width/height and JPEG quality.
+  quality_mode: scale_and_jpeg
+
+cameras:
+  - name: front_fisheye
+    input_topic: /catamaran/cameras/front_fisheye/compressed
+    output_topic: /catamaran/cameras/front_fisheye/republished/compressed
+    control_topic: /catamaran/cameras/front_fisheye/control
+
+  - name: left_fisheye
+    input_topic: /catamaran/cameras/left_fisheye/compressed
+    output_topic: /catamaran/cameras/left_fisheye/republished/compressed
+    control_topic: /catamaran/cameras/left_fisheye/control
+
+  - name: back_fisheye
+    input_topic: /catamaran/cameras/back_fisheye/compressed
+    output_topic: /catamaran/cameras/back_fisheye/republished/compressed
+    control_topic: /catamaran/cameras/back_fisheye/control
+
+  - name: right_fisheye
+    input_topic: /catamaran/cameras/right_fisheye/compressed
+    output_topic: /catamaran/cameras/right_fisheye/republished/compressed
+    control_topic: /catamaran/cameras/right_fisheye/control
+
+  - name: logitech
+    input_topic: /catamaran/cameras/logitech/compressed
+    output_topic: /catamaran/cameras/logitech/republished/compressed
+    control_topic: /catamaran/cameras/logitech/control
+    default_quality: 70
+
+  - name: fisheye_surroud
+    input_topic: /surround_view/image/compressed
+    output_topic: /surround_view/image/republished/compressed
+    control_topic: /surround_view/image/control
