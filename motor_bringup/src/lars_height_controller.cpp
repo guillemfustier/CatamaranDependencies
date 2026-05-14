@@ -9,9 +9,10 @@
 #include <algorithm>
 #include <chrono>
 #include <cmath>
-#include <cstdint>                  
+#include <cstdint>
 #include <memory>
 #include <string>
+#include <vector>
 
 #include "rclcpp/rclcpp.hpp"
 #include "dynamixel_sdk/dynamixel_sdk.h"
@@ -19,9 +20,10 @@
 
 // Control table for Dynamixel X Series
 #define ADDR_OPERATING_MODE 11
-#define ADDR_VELOCITY_LIMIT 44
 #define ADDR_TORQUE_ENABLE 64
-#define ADDR_GOAL_VELOCITY 104
+#define ADDR_PROFILE_VELOCITY 112
+#define ADDR_GOAL_POSITION 116
+#define ADDR_PRESENT_POSITION 132
 
 // Protocol version
 #define PROTOCOL_VERSION 2.0
@@ -30,6 +32,7 @@
 #define BAUDRATE 57600
 #define DEFAULT_DEVICE_NAME "/dev/ttyUSB0"
 #define VELOCITY_UNIT 0.229
+#define TICKS_PER_TURN 4096.0
 
 // LARS system parameters
 constexpr double kInitialHeightCm = 24.0;
@@ -37,7 +40,7 @@ constexpr double kMaxHeightCm = 35.0;
 constexpr double kMinHeightCm = 0.0;
 constexpr double kMotorTurnsPerCm = 5.0;
 constexpr double kMaxMotorRpm = 60.0; // default, can be overridden via parameter
-constexpr int32_t kVelocityLimit = 1023;
+constexpr int32_t kProfileVelocityLimit = 32767;
 
 // Two synchronized motors for the linear axes
 constexpr uint8_t kMotorIdLeft = 3;
@@ -54,12 +57,14 @@ public:
     LarsHeightController()
     : Node("lars_height_controller"),
       current_height_cm_(kInitialHeightCm),
-            max_height_cm_(kMaxHeightCm),
-            max_motor_rpm_(kMaxMotorRpm),
-            target_height_cm_(kInitialHeightCm),
-            motion_active_(false),
-            active_velocity_command_(0),
-            motion_duration_s_(0.0) {
+    max_height_cm_(kMaxHeightCm),
+    max_motor_rpm_(kMaxMotorRpm),
+    target_height_cm_(kInitialHeightCm),
+    reference_height_cm_(kInitialHeightCm),
+    reference_left_position_raw_(0),
+    reference_right_position_raw_(0),
+    reference_initialized_(false),
+    profile_velocity_raw_(0) {
 
         RCLCPP_INFO(this->get_logger(), "LARS Height Controller node started");
 
@@ -76,6 +81,8 @@ public:
         this->get_parameter("initial_height", current_height_cm_);
         this->get_parameter("max_height", max_height_cm_);
         this->get_parameter("max_motor_rpm", max_motor_rpm_);
+        reference_height_cm_ = current_height_cm_;
+        profile_velocity_raw_ = rpmToProfileVelocityRaw(max_motor_rpm_);
 
         std::string goal_topic;
         std::string actual_topic;
@@ -93,12 +100,10 @@ public:
             });
 
         control_timer_ = this->create_wall_timer(
-            std::chrono::milliseconds(20),
+            std::chrono::milliseconds(100),
             [this]() {
-                this->processMotion();
+                this->publishActualFromMotors();
             });
-
-        publishCurrentHeight();
 
         param_cb_handle_ = this->add_on_set_parameters_callback(
             [this](const std::vector<rclcpp::Parameter> &params) {
@@ -113,6 +118,7 @@ public:
                             return result;
                         }
                         max_motor_rpm_ = val;
+                        profile_velocity_raw_ = rpmToProfileVelocityRaw(max_motor_rpm_);
                     }
                 }
                 return result;
@@ -131,174 +137,71 @@ public:
         }
 
         target_height_cm_ = goal_height_cm;
-        replanMotion();
+        sendGoalPositions();
+    }
+
+    bool initializeReferenceFromMotors() {
+        int32_t left_present = 0;
+        int32_t right_present = 0;
+        if (!readPresentPositionRaw(kMotorIdLeft, left_present)) {
+            return false;
+        }
+        if (!readPresentPositionRaw(kMotorIdRight, right_present)) {
+            return false;
+        }
+
+        reference_left_position_raw_ = left_present;
+        reference_right_position_raw_ = right_present;
+        reference_initialized_ = true;
+        publishCurrentHeight(current_height_cm_);
+        return true;
     }
 
 private:
-    void processMotion() {
-        if (!motion_active_) {
-            return;
-        }
-
-        updateEstimatedHeight();
-
-        if (!motion_active_ && active_velocity_command_ != 0) {
-            stopMotors();
-        }
+    int32_t rpmToProfileVelocityRaw(double rpm) const {
+        const int32_t raw = static_cast<int32_t>(std::round(rpm / VELOCITY_UNIT));
+        return std::clamp(raw, 1, kProfileVelocityLimit);
     }
 
-    void replanMotion() {
-        updateEstimatedHeight();
-
-        const double delta_cm = target_height_cm_ - current_height_cm_;
-        if (std::abs(delta_cm) < 1e-6) {
-            if (active_velocity_command_ != 0) {
-                stopMotors();
-            }
-            publishCurrentHeight();
-            return;
-        }
-
-        const double motor_turns = std::abs(delta_cm) * kMotorTurnsPerCm;
-
-        int32_t requested_velocity = static_cast<int32_t>(std::round(max_motor_rpm_ / VELOCITY_UNIT));
-        const int32_t safe_velocity_limit = readSafeVelocityLimit();
-        requested_velocity = std::max(requested_velocity, 1);
-        const int32_t velocity_magnitude = std::clamp(requested_velocity, 1, safe_velocity_limit);
-        const double effective_motor_rpm = static_cast<double>(velocity_magnitude) * VELOCITY_UNIT;
-
-        if (velocity_magnitude < requested_velocity) {
-            RCLCPP_WARN(
-                this->get_logger(),
-                "Requested RPM %.3f exceeds motor velocity limit (raw %d). Using %.3f RPM.",
-                max_motor_rpm_,
-                safe_velocity_limit,
-                effective_motor_rpm);
-        }
-
-        double motion_time_s = (motor_turns / effective_motor_rpm) * 60.0;
-        motion_time_s = std::round(motion_time_s * 100.0) / 100.0;
-
-        int32_t velocity_command = velocity_magnitude;
-
-        const bool should_raise = delta_cm > 0.0;
-        if (!should_raise) {
-            velocity_command = -velocity_command;
-        }
-
-        RCLCPP_INFO(
-            this->get_logger(),
-            "Goal: %.3f cm | Current: %.3f cm | Delta: %.3f cm | Motor turns: %.3f | Time: %.3f s",
-            target_height_cm_,
-            current_height_cm_,
-            delta_cm,
-            motor_turns,
-            motion_time_s);
-
-        if (velocity_command != active_velocity_command_) {
-            if (!writeVelocityBoth(velocity_command)) {
-                return;
-            }
-            active_velocity_command_ = velocity_command;
-        }
-
-        motion_active_ = true;
-        motion_start_time_ = this->now();
-        motion_start_height_cm_ = current_height_cm_;
-        motion_goal_height_cm_ = target_height_cm_;
-        motion_duration_s_ = motion_time_s;
-    }
-
-    void updateEstimatedHeight() {
-        if (!motion_active_) {
-            return;
-        }
-
-        if (motion_duration_s_ <= 0.0) {
-            current_height_cm_ = motion_goal_height_cm_;
-            motion_active_ = false;
-            publishCurrentHeight();
-            return;
-        }
-
-        const double elapsed_s = (this->now() - motion_start_time_).seconds();
-        const double progress = std::clamp(elapsed_s / motion_duration_s_, 0.0, 1.0);
-
-        current_height_cm_ =
-            motion_start_height_cm_ + (motion_goal_height_cm_ - motion_start_height_cm_) * progress;
-
-        if (progress >= 1.0) {
-            motion_active_ = false;
-            publishCurrentHeight();
-        }
-    }
-
-    void stopMotors() {
-        if (active_velocity_command_ == 0) {
-            return;
-        }
-
-        if (!writeVelocityBoth(0)) {
-            return;
-        }
-
-        active_velocity_command_ = 0;
-    }
-
-    int32_t readMotorVelocityLimit(uint8_t motor_id) {
+    bool readPresentPositionRaw(uint8_t motor_id, int32_t &position_raw) {
         uint8_t local_error = 0;
-        uint32_t velocity_limit_raw = 0;
+        uint32_t raw = 0;
         const int comm_result = packetHandler->read4ByteTxRx(
             portHandler,
             motor_id,
-            ADDR_VELOCITY_LIMIT,
-            &velocity_limit_raw,
+            ADDR_PRESENT_POSITION,
+            &raw,
             &local_error);
 
         if (comm_result != COMM_SUCCESS) {
-            RCLCPP_WARN(
-                this->get_logger(),
-                "Motor %d: could not read velocity limit (%s). Falling back to %d.",
-                motor_id,
-                packetHandler->getTxRxResult(comm_result),
-                kVelocityLimit);
-            return kVelocityLimit;
+            RCLCPP_ERROR(this->get_logger(), "Motor %d: %s", motor_id, packetHandler->getTxRxResult(comm_result));
+            return false;
         }
 
         if (local_error != 0) {
-            RCLCPP_WARN(
-                this->get_logger(),
-                "Motor %d: velocity limit read error (%s). Falling back to %d.",
-                motor_id,
-                packetHandler->getRxPacketError(local_error),
-                kVelocityLimit);
-            return kVelocityLimit;
+            RCLCPP_ERROR(this->get_logger(), "Motor %d: %s", motor_id, packetHandler->getRxPacketError(local_error));
+            return false;
         }
 
-        if (velocity_limit_raw == 0) {
-            RCLCPP_WARN(
-                this->get_logger(),
-                "Motor %d: reported velocity limit is 0. Falling back to %d.",
-                motor_id,
-                kVelocityLimit);
-            return kVelocityLimit;
+        position_raw = static_cast<int32_t>(raw);
+        return true;
+    }
+
+    double rawToHeightCm(int32_t position_raw, int32_t reference_position_raw) const {
+        if (!reference_initialized_) {
+            return current_height_cm_;
         }
 
-        return std::min(static_cast<int32_t>(velocity_limit_raw), kVelocityLimit);
+        const double motor_turns = static_cast<double>(position_raw - reference_position_raw) / TICKS_PER_TURN;
+        return reference_height_cm_ + motor_turns / kMotorTurnsPerCm;
     }
 
-    int32_t readSafeVelocityLimit() {
-        const int32_t left_limit = readMotorVelocityLimit(kMotorIdLeft);
-        const int32_t right_limit = readMotorVelocityLimit(kMotorIdRight);
-        return std::max(1, std::min(left_limit, right_limit));
-    }
-
-    bool writeVelocityBoth(int32_t velocity) {
+    bool writeProfileVelocityBoth(int32_t velocity_raw) {
         dxl_comm_result = packetHandler->write4ByteTxRx(
             portHandler,
             kMotorIdLeft,
-            ADDR_GOAL_VELOCITY,
-            velocity,
+            ADDR_PROFILE_VELOCITY,
+            static_cast<uint32_t>(velocity_raw),
             &dxl_error);
 
         if (dxl_comm_result != COMM_SUCCESS) {
@@ -314,8 +217,8 @@ private:
         dxl_comm_result = packetHandler->write4ByteTxRx(
             portHandler,
             kMotorIdRight,
-            ADDR_GOAL_VELOCITY,
-            velocity,
+            ADDR_PROFILE_VELOCITY,
+            static_cast<uint32_t>(velocity_raw),
             &dxl_error);
 
         if (dxl_comm_result != COMM_SUCCESS) {
@@ -328,20 +231,140 @@ private:
             return false;
         }
 
-        if (velocity == 0) {
-            RCLCPP_INFO(this->get_logger(), "Both LARS motors stopped");
-        } else {
-            RCLCPP_INFO(this->get_logger(), "Both LARS motors running at velocity %d", velocity);
+        return true;
+    }
+
+    bool writeGoalPositionBoth(int32_t left_goal_raw, int32_t right_goal_raw) {
+        dxl_comm_result = packetHandler->write4ByteTxRx(
+            portHandler,
+            kMotorIdLeft,
+            ADDR_GOAL_POSITION,
+            static_cast<uint32_t>(left_goal_raw),
+            &dxl_error);
+
+        if (dxl_comm_result != COMM_SUCCESS) {
+            RCLCPP_ERROR(this->get_logger(), "Motor %d: %s", kMotorIdLeft, packetHandler->getTxRxResult(dxl_comm_result));
+            return false;
+        }
+
+        if (dxl_error != 0) {
+            RCLCPP_ERROR(this->get_logger(), "Motor %d: %s", kMotorIdLeft, packetHandler->getRxPacketError(dxl_error));
+            return false;
+        }
+
+        dxl_comm_result = packetHandler->write4ByteTxRx(
+            portHandler,
+            kMotorIdRight,
+            ADDR_GOAL_POSITION,
+            static_cast<uint32_t>(right_goal_raw),
+            &dxl_error);
+
+        if (dxl_comm_result != COMM_SUCCESS) {
+            RCLCPP_ERROR(this->get_logger(), "Motor %d: %s", kMotorIdRight, packetHandler->getTxRxResult(dxl_comm_result));
+            return false;
+        }
+
+        if (dxl_error != 0) {
+            RCLCPP_ERROR(this->get_logger(), "Motor %d: %s", kMotorIdRight, packetHandler->getRxPacketError(dxl_error));
+            return false;
         }
 
         return true;
     }
 
-    void publishCurrentHeight() {
+    void sendGoalPositions() {
+        int32_t left_present = 0;
+        int32_t right_present = 0;
+        if (!readPresentPositionRaw(kMotorIdLeft, left_present)) {
+            return;
+        }
+        if (!readPresentPositionRaw(kMotorIdRight, right_present)) {
+            return;
+        }
+
+        if (!reference_initialized_) {
+            reference_left_position_raw_ = left_present;
+            reference_right_position_raw_ = right_present;
+            reference_initialized_ = true;
+        }
+
+        const double left_height_cm = rawToHeightCm(left_present, reference_left_position_raw_);
+        const double right_height_cm = rawToHeightCm(right_present, reference_right_position_raw_);
+        const double present_height_cm = (left_height_cm + right_height_cm) * 0.5;
+
+        const double delta_cm = target_height_cm_ - present_height_cm;
+        if (std::abs(delta_cm) < 1e-6) {
+            publishCurrentHeight(present_height_cm);
+            return;
+        }
+
+        const double motor_turn_delta = delta_cm * kMotorTurnsPerCm;
+        const int32_t delta_raw = static_cast<int32_t>(std::llround(motor_turn_delta * TICKS_PER_TURN));
+
+        const int32_t left_goal_raw = left_present + delta_raw;
+        const int32_t right_goal_raw = right_present + delta_raw;
+
+        if (!writeProfileVelocityBoth(profile_velocity_raw_)) {
+            return;
+        }
+
+        if (!writeGoalPositionBoth(left_goal_raw, right_goal_raw)) {
+            return;
+        }
+
+        RCLCPP_INFO(
+            this->get_logger(),
+            "Goal: %.3f cm | Current: %.3f cm | Delta: %.3f cm | Delta turns: %.3f | Left goal raw: %d | Right goal raw: %d",
+            target_height_cm_,
+            present_height_cm,
+            delta_cm,
+            motor_turn_delta,
+            left_goal_raw,
+            right_goal_raw);
+
+        current_height_cm_ = target_height_cm_;
+    }
+
+    void publishActualFromMotors() {
+        int32_t left_present = 0;
+        int32_t right_present = 0;
+        if (!readPresentPositionRaw(kMotorIdLeft, left_present)) {
+            return;
+        }
+        if (!readPresentPositionRaw(kMotorIdRight, right_present)) {
+            return;
+        }
+
+        if (!reference_initialized_) {
+            reference_left_position_raw_ = left_present;
+            reference_right_position_raw_ = right_present;
+            reference_initialized_ = true;
+        }
+
+        const double left_height_cm = rawToHeightCm(left_present, reference_left_position_raw_);
+        const double right_height_cm = rawToHeightCm(right_present, reference_right_position_raw_);
+        const double average_height_cm = (left_height_cm + right_height_cm) * 0.5;
+
+        const double disagreement_cm = std::abs(left_height_cm - right_height_cm);
+        if (disagreement_cm > 0.5) {
+            RCLCPP_WARN(
+                this->get_logger(),
+                "LARS axes mismatch detected: left %.3f cm vs right %.3f cm (delta %.3f cm)",
+                left_height_cm,
+                right_height_cm,
+                disagreement_cm);
+        }
+
+        publishCurrentHeight(average_height_cm);
+    }
+
+    void publishCurrentHeight(double height_cm) {
+        const double clamped_height_cm = std::clamp(height_cm, kMinHeightCm, max_height_cm_);
+        current_height_cm_ = clamped_height_cm;
         std_msgs::msg::Float32 msg;
-        msg.data = static_cast<float>(current_height_cm_);
+        msg.data = static_cast<float>(clamped_height_cm);
         actual_publisher_->publish(msg);
-        RCLCPP_INFO(this->get_logger(), "Published current LARS height: %.3f cm", current_height_cm_);
+        RCLCPP_INFO(this->get_logger(), "Published current LARS height: %.3f cm", clamped_height_cm);
     }
 
     rclcpp::Subscription<std_msgs::msg::Float32>::SharedPtr goal_subscriber_;
@@ -351,16 +374,15 @@ private:
     double max_height_cm_;
     double max_motor_rpm_;
     double target_height_cm_;
-    bool motion_active_;
-    int32_t active_velocity_command_;
-    rclcpp::Time motion_start_time_;
-    double motion_start_height_cm_;
-    double motion_goal_height_cm_;
-    double motion_duration_s_;
+    double reference_height_cm_;
+    int32_t reference_left_position_raw_;
+    int32_t reference_right_position_raw_;
+    bool reference_initialized_;
+    int32_t profile_velocity_raw_;
     rclcpp::node_interfaces::OnSetParametersCallbackHandle::SharedPtr param_cb_handle_;
 };
 
-void setupDynamixel(uint8_t dxl_id) {
+bool setupDynamixel(uint8_t dxl_id) {
     dxl_comm_result = packetHandler->write1ByteTxRx(
         portHandler,
         dxl_id,
@@ -370,19 +392,21 @@ void setupDynamixel(uint8_t dxl_id) {
 
     if (dxl_comm_result != COMM_SUCCESS) {
         RCLCPP_ERROR(rclcpp::get_logger("lars_height_controller"), "Failed to disable torque for ID %d.", dxl_id);
+        return false;
     }
 
     dxl_comm_result = packetHandler->write1ByteTxRx(
         portHandler,
         dxl_id,
         ADDR_OPERATING_MODE,
-        1,
+        4,
         &dxl_error);
 
     if (dxl_comm_result != COMM_SUCCESS) {
-        RCLCPP_ERROR(rclcpp::get_logger("lars_height_controller"), "Failed to set Velocity Control mode for ID %d.", dxl_id);
+        RCLCPP_ERROR(rclcpp::get_logger("lars_height_controller"), "Failed to set Extended Position mode for ID %d.", dxl_id);
+        return false;
     } else {
-        RCLCPP_INFO(rclcpp::get_logger("lars_height_controller"), "Velocity Control mode set for ID %d.", dxl_id);
+        RCLCPP_INFO(rclcpp::get_logger("lars_height_controller"), "Extended Position mode set for ID %d.", dxl_id);
     }
 
     dxl_comm_result = packetHandler->write1ByteTxRx(
@@ -394,9 +418,12 @@ void setupDynamixel(uint8_t dxl_id) {
 
     if (dxl_comm_result != COMM_SUCCESS) {
         RCLCPP_ERROR(rclcpp::get_logger("lars_height_controller"), "Failed to enable torque for ID %d.", dxl_id);
+        return false;
     } else {
         RCLCPP_INFO(rclcpp::get_logger("lars_height_controller"), "Torque enabled for ID %d.", dxl_id);
     }
+
+    return true;
 }
 
 int main(int argc, char * argv[]) {
@@ -433,8 +460,21 @@ int main(int argc, char * argv[]) {
 
     RCLCPP_INFO(lars_controller->get_logger(), "Succeeded to set the baudrate.");
 
-    setupDynamixel(kMotorIdLeft);
-    setupDynamixel(kMotorIdRight);
+    if (!setupDynamixel(kMotorIdLeft) || !setupDynamixel(kMotorIdRight)) {
+        packetHandler->write1ByteTxRx(portHandler, kMotorIdLeft, ADDR_TORQUE_ENABLE, 0, &dxl_error);
+        packetHandler->write1ByteTxRx(portHandler, kMotorIdRight, ADDR_TORQUE_ENABLE, 0, &dxl_error);
+        portHandler->closePort();
+        rclcpp::shutdown();
+        return -1;
+    }
+
+    if (!lars_controller->initializeReferenceFromMotors()) {
+        packetHandler->write1ByteTxRx(portHandler, kMotorIdLeft, ADDR_TORQUE_ENABLE, 0, &dxl_error);
+        packetHandler->write1ByteTxRx(portHandler, kMotorIdRight, ADDR_TORQUE_ENABLE, 0, &dxl_error);
+        portHandler->closePort();
+        rclcpp::shutdown();
+        return -1;
+    }
 
     rclcpp::spin(lars_controller);
 

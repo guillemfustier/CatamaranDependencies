@@ -19,9 +19,11 @@
 #include "std_msgs/msg/float32.hpp"
 
 // Control table for Dynamixel X Series
-#define ADDR_OPERATING_MODE 11 // 1 for velocity control | 3 for position control
+#define ADDR_OPERATING_MODE 11 // 4 for extended position control
 #define ADDR_TORQUE_ENABLE 64  // 0 for torque off | 1 for torque on
-#define ADDR_GOAL_VELOCITY 104
+#define ADDR_PROFILE_VELOCITY 112
+#define ADDR_GOAL_POSITION 116
+#define ADDR_PRESENT_POSITION 132
 
 // Protocol version
 #define PROTOCOL_VERSION 2.0
@@ -30,6 +32,7 @@
 #define BAUDRATE 57600
 #define DEFAULT_DEVICE_NAME "/dev/ttyUSB0"
 #define VELOCITY_UNIT 0.229
+#define TICKS_PER_TURN 4096.0
 
 // Cable system parameters
 constexpr double kPi = 3.14159265358979323846;
@@ -40,7 +43,7 @@ constexpr double kCablePerMotorRotationMeters = kSpoolCircumferenceMeters / kGea
 constexpr double kMaxCableDistanceMeters = 190.0;
 constexpr double kInitialCableDistanceMeters = 1.0;
 constexpr double kMaxMotorRpm = 30.0;
-constexpr int32_t kVelocityLimit = 1023;
+constexpr int32_t kProfileVelocityLimit = 32767;
 
 // Dynamixel motor ID for the cable spool
 constexpr uint8_t kMotorId = 2;
@@ -58,9 +61,10 @@ public:
             current_cable_distance_m_(kInitialCableDistanceMeters),
             max_cable_distance_m_(kMaxCableDistanceMeters),
             target_cable_distance_m_(kInitialCableDistanceMeters),
-            motion_active_(false),
-            active_velocity_command_(0),
-            motion_duration_s_(0.0) {
+            reference_cable_distance_m_(kInitialCableDistanceMeters),
+            reference_motor_position_raw_(0),
+            reference_initialized_(false),
+            profile_velocity_raw_(0) {
 
         RCLCPP_INFO(this->get_logger(), "Cable Distance Controller node started");
 
@@ -70,11 +74,17 @@ public:
         this->declare_parameter("actual_topic", std::string("/cable_distance_actual"));
         this->declare_parameter("initial_cable_distance", kInitialCableDistanceMeters);
         this->declare_parameter("max_cable_distance", kMaxCableDistanceMeters);
+        this->declare_parameter("max_motor_rpm", kMaxMotorRpm);
 
         int8_t qos_depth = 10;
         this->get_parameter("qos_depth", qos_depth);
         this->get_parameter("initial_cable_distance", current_cable_distance_m_);
         this->get_parameter("max_cable_distance", max_cable_distance_m_);
+        reference_cable_distance_m_ = current_cable_distance_m_;
+
+        double max_motor_rpm = kMaxMotorRpm;
+        this->get_parameter("max_motor_rpm", max_motor_rpm);
+        profile_velocity_raw_ = rpmToProfileVelocityRaw(max_motor_rpm);
 
         std::string goal_topic;
         std::string actual_topic;
@@ -92,12 +102,10 @@ public:
             });
 
         control_timer_ = this->create_wall_timer(
-            std::chrono::milliseconds(20),
+            std::chrono::milliseconds(100),
             [this]() {
-                this->processMotion();
+                this->publishActualFromMotor();
             });
-
-        publishCurrentDistance();
     }
 
     void handleCableDistanceCommand(double requested_distance_m) {
@@ -112,114 +120,67 @@ public:
         }
 
         target_cable_distance_m_ = goal_distance_m;
-        replanMotion();
+        sendGoalPosition();
+    }
+
+    bool initializeReferenceFromMotor() {
+        int32_t present_position_raw = 0;
+        if (!readPresentPositionRaw(present_position_raw)) {
+            return false;
+        }
+
+        reference_motor_position_raw_ = present_position_raw;
+        reference_initialized_ = true;
+        publishCurrentDistance(current_cable_distance_m_);
+        return true;
     }
 
 private:
-    void processMotion() {
-        if (!motion_active_) {
-            return;
-        }
-
-        updateEstimatedDistance();
-
-        if (!motion_active_ && active_velocity_command_ != 0) {
-            stopMotor();
-        }
+    int32_t rpmToProfileVelocityRaw(double rpm) const {
+        const int32_t raw = static_cast<int32_t>(std::round(rpm / VELOCITY_UNIT));
+        return std::clamp(raw, 1, kProfileVelocityLimit);
     }
 
-    void replanMotion() {
-        updateEstimatedDistance();
+    bool readPresentPositionRaw(int32_t &position_raw) {
+        uint8_t local_error = 0;
+        uint32_t raw = 0;
+        const int comm_result = packetHandler->read4ByteTxRx(
+            portHandler,
+            kMotorId,
+            ADDR_PRESENT_POSITION,
+            &raw,
+            &local_error);
 
-        const double delta_distance_m = target_cable_distance_m_ - current_cable_distance_m_;
-        if (std::abs(delta_distance_m) < 1e-6) {
-            if (active_velocity_command_ != 0) {
-                stopMotor();
-            }
-            publishCurrentDistance();
-            return;
+        if (comm_result != COMM_SUCCESS) {
+            RCLCPP_ERROR(this->get_logger(), "Motor %d: %s", kMotorId, packetHandler->getTxRxResult(comm_result));
+            return false;
         }
 
-        int32_t velocity_magnitude = static_cast<int32_t>(std::round(kMaxMotorRpm / VELOCITY_UNIT));
-        velocity_magnitude = std::clamp(velocity_magnitude, 1, kVelocityLimit);
-        const double effective_motor_rpm = static_cast<double>(velocity_magnitude) * VELOCITY_UNIT;
-
-        const double motor_rotations = std::abs(delta_distance_m) / kCablePerMotorRotationMeters;
-        double motion_time_s = (motor_rotations / effective_motor_rpm) * 60.0;
-        motion_time_s = std::round(motion_time_s * 100.0) / 100.0;
-
-        int32_t velocity_command = velocity_magnitude;
-
-        const bool should_extend_cable = delta_distance_m > 0.0;
-        if (!should_extend_cable) {
-            velocity_command = -velocity_command;
+        if (local_error != 0) {
+            RCLCPP_ERROR(this->get_logger(), "Motor %d: %s", kMotorId, packetHandler->getRxPacketError(local_error));
+            return false;
         }
 
-        RCLCPP_INFO(
-            this->get_logger(),
-            "Goal: %.3f m | Current: %.3f m | Delta: %.3f m | Motor rotations: %.3f | Time: %.3f s",
-            target_cable_distance_m_,
-            current_cable_distance_m_,
-            delta_distance_m,
-            motor_rotations,
-            motion_time_s);
-
-        if (velocity_command != active_velocity_command_) {
-            if (!writeGoalVelocity(velocity_command)) {
-                return;
-            }
-            active_velocity_command_ = velocity_command;
-        }
-
-        motion_active_ = true;
-        motion_start_time_ = this->now();
-        motion_start_distance_m_ = current_cable_distance_m_;
-        motion_goal_distance_m_ = target_cable_distance_m_;
-        motion_duration_s_ = motion_time_s;
+        position_raw = static_cast<int32_t>(raw);
+        return true;
     }
 
-    void updateEstimatedDistance() {
-        if (!motion_active_) {
-            return;
+    double rawToCableDistanceMeters(int32_t position_raw) const {
+        if (!reference_initialized_) {
+            return current_cable_distance_m_;
         }
 
-        if (motion_duration_s_ <= 0.0) {
-            current_cable_distance_m_ = motion_goal_distance_m_;
-            motion_active_ = false;
-            publishCurrentDistance();
-            return;
-        }
-
-        const double elapsed_s = (this->now() - motion_start_time_).seconds();
-        const double progress = std::clamp(elapsed_s / motion_duration_s_, 0.0, 1.0);
-
-        current_cable_distance_m_ =
-            motion_start_distance_m_ + (motion_goal_distance_m_ - motion_start_distance_m_) * progress;
-
-        if (progress >= 1.0) {
-            motion_active_ = false;
-            publishCurrentDistance();
-        }
+        const double motor_turns =
+            static_cast<double>(position_raw - reference_motor_position_raw_) / TICKS_PER_TURN;
+        return reference_cable_distance_m_ + motor_turns * kCablePerMotorRotationMeters;
     }
 
-    void stopMotor() {
-        if (active_velocity_command_ == 0) {
-            return;
-        }
-
-        if (!writeGoalVelocity(0)) {
-            return;
-        }
-
-        active_velocity_command_ = 0;
-    }
-
-    bool writeGoalVelocity(int32_t velocity) {
+    bool writeProfileVelocity(int32_t velocity_raw) {
         dxl_comm_result = packetHandler->write4ByteTxRx(
             portHandler,
             kMotorId,
-            ADDR_GOAL_VELOCITY,
-            velocity,
+            ADDR_PROFILE_VELOCITY,
+            static_cast<uint32_t>(velocity_raw),
             &dxl_error);
 
         if (dxl_comm_result != COMM_SUCCESS) {
@@ -232,20 +193,95 @@ private:
             return false;
         }
 
-        if (velocity == 0) {
-            RCLCPP_INFO(this->get_logger(), "Motor [ID: %d] stopped", kMotorId);
-        } else {
-            RCLCPP_INFO(this->get_logger(), "Motor [ID: %d] running at velocity %d", kMotorId, velocity);
+        return true;
+    }
+
+    bool writeGoalPosition(int32_t goal_position_raw) {
+        dxl_comm_result = packetHandler->write4ByteTxRx(
+            portHandler,
+            kMotorId,
+            ADDR_GOAL_POSITION,
+            static_cast<uint32_t>(goal_position_raw),
+            &dxl_error);
+
+        if (dxl_comm_result != COMM_SUCCESS) {
+            RCLCPP_ERROR(this->get_logger(), "%s", packetHandler->getTxRxResult(dxl_comm_result));
+            return false;
+        }
+
+        if (dxl_error != 0) {
+            RCLCPP_ERROR(this->get_logger(), "%s", packetHandler->getRxPacketError(dxl_error));
+            return false;
         }
 
         return true;
     }
 
-    void publishCurrentDistance() {
+    void sendGoalPosition() {
+        int32_t present_position_raw = 0;
+        if (!readPresentPositionRaw(present_position_raw)) {
+            return;
+        }
+
+        if (!reference_initialized_) {
+            reference_motor_position_raw_ = present_position_raw;
+            reference_initialized_ = true;
+        }
+
+        const double present_distance_m = rawToCableDistanceMeters(present_position_raw);
+        const double delta_distance_m = target_cable_distance_m_ - present_distance_m;
+
+        if (std::abs(delta_distance_m) < 1e-6) {
+            publishCurrentDistance(present_distance_m);
+            return;
+        }
+
+        const double motor_turn_delta = delta_distance_m / kCablePerMotorRotationMeters;
+        const int32_t position_delta_raw =
+            static_cast<int32_t>(std::llround(motor_turn_delta * TICKS_PER_TURN));
+        const int32_t goal_position_raw = present_position_raw + position_delta_raw;
+
+        if (!writeProfileVelocity(profile_velocity_raw_)) {
+            return;
+        }
+
+        if (!writeGoalPosition(goal_position_raw)) {
+            return;
+        }
+
+        RCLCPP_INFO(
+            this->get_logger(),
+            "Goal: %.3f m | Current: %.3f m | Delta: %.3f m | Delta turns: %.3f | Goal raw: %d",
+            target_cable_distance_m_,
+            present_distance_m,
+            delta_distance_m,
+            motor_turn_delta,
+            goal_position_raw);
+
+        current_cable_distance_m_ = target_cable_distance_m_;
+    }
+
+    void publishActualFromMotor() {
+        int32_t present_position_raw = 0;
+        if (!readPresentPositionRaw(present_position_raw)) {
+            return;
+        }
+
+        if (!reference_initialized_) {
+            reference_motor_position_raw_ = present_position_raw;
+            reference_initialized_ = true;
+        }
+
+        publishCurrentDistance(rawToCableDistanceMeters(present_position_raw));
+    }
+
+    void publishCurrentDistance(double distance_m) {
+        const double clamped_distance_m = std::clamp(distance_m, 0.0, max_cable_distance_m_);
+        current_cable_distance_m_ = clamped_distance_m;
         std_msgs::msg::Float32 msg;
-        msg.data = static_cast<float>(current_cable_distance_m_);
+        msg.data = static_cast<float>(clamped_distance_m);
         cable_distance_publisher_->publish(msg);
-        RCLCPP_INFO(this->get_logger(), "Published current cable distance: %.3f m", current_cable_distance_m_);
+        RCLCPP_INFO(this->get_logger(), "Published current cable distance: %.3f m", clamped_distance_m);
     }
 
     rclcpp::Subscription<std_msgs::msg::Float32>::SharedPtr cable_distance_subscriber_;
@@ -254,15 +290,13 @@ private:
     double current_cable_distance_m_;
     double max_cable_distance_m_;
     double target_cable_distance_m_;
-    bool motion_active_;
-    int32_t active_velocity_command_;
-    rclcpp::Time motion_start_time_;
-    double motion_start_distance_m_;
-    double motion_goal_distance_m_;
-    double motion_duration_s_;
+    double reference_cable_distance_m_;
+    int32_t reference_motor_position_raw_;
+    bool reference_initialized_;
+    int32_t profile_velocity_raw_;
 };
 
-void setupDynamixel(uint8_t dxl_id) {
+bool setupDynamixel(uint8_t dxl_id) {
     dxl_comm_result = packetHandler->write1ByteTxRx(
         portHandler,
         dxl_id,
@@ -272,19 +306,21 @@ void setupDynamixel(uint8_t dxl_id) {
 
     if (dxl_comm_result != COMM_SUCCESS) {
         RCLCPP_ERROR(rclcpp::get_logger("cable_distance_controller"), "Failed to disable torque for ID %d.", dxl_id);
+        return false;
     }
 
     dxl_comm_result = packetHandler->write1ByteTxRx(
         portHandler,
         dxl_id,
         ADDR_OPERATING_MODE,
-        1,
+        4,
         &dxl_error);
 
     if (dxl_comm_result != COMM_SUCCESS) {
-        RCLCPP_ERROR(rclcpp::get_logger("cable_distance_controller"), "Failed to set Velocity Control mode for ID %d.", dxl_id);
+        RCLCPP_ERROR(rclcpp::get_logger("cable_distance_controller"), "Failed to set Extended Position mode for ID %d.", dxl_id);
+        return false;
     } else {
-        RCLCPP_INFO(rclcpp::get_logger("cable_distance_controller"), "Velocity Control mode set for ID %d.", dxl_id);
+        RCLCPP_INFO(rclcpp::get_logger("cable_distance_controller"), "Extended Position mode set for ID %d.", dxl_id);
     }
 
     dxl_comm_result = packetHandler->write1ByteTxRx(
@@ -296,9 +332,12 @@ void setupDynamixel(uint8_t dxl_id) {
 
     if (dxl_comm_result != COMM_SUCCESS) {
         RCLCPP_ERROR(rclcpp::get_logger("cable_distance_controller"), "Failed to enable torque for ID %d.", dxl_id);
+        return false;
     } else {
         RCLCPP_INFO(rclcpp::get_logger("cable_distance_controller"), "Torque enabled for ID %d.", dxl_id);
     }
+
+    return true;
 }
 
 int main(int argc, char * argv[]) {
@@ -335,7 +374,29 @@ int main(int argc, char * argv[]) {
 
     RCLCPP_INFO(cable_controller->get_logger(), "Succeeded to set the baudrate.");
 
-    setupDynamixel(kMotorId);
+    if (!setupDynamixel(kMotorId)) {
+        packetHandler->write1ByteTxRx(
+            portHandler,
+            kMotorId,
+            ADDR_TORQUE_ENABLE,
+            0,
+            &dxl_error);
+        portHandler->closePort();
+        rclcpp::shutdown();
+        return -1;
+    }
+
+    if (!cable_controller->initializeReferenceFromMotor()) {
+        packetHandler->write1ByteTxRx(
+            portHandler,
+            kMotorId,
+            ADDR_TORQUE_ENABLE,
+            0,
+            &dxl_error);
+        portHandler->closePort();
+        rclcpp::shutdown();
+        return -1;
+    }
 
     rclcpp::spin(cable_controller);
 
