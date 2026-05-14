@@ -16,7 +16,17 @@ Remember to source the workspace after building:
 source install/setup.bash
 ```
 
----
+## External Repositories
+
+Some dependencies are kept as standalone repositories and should be brought into the workspace with `vcs`.
+
+```bash
+vcs import . < catamaran_dependencies.repos
+```
+
+Standalone repositories:
+- unilidar_sdk:
+- SurroundViewRealTimeCatamaran:
 
 ## Components
 

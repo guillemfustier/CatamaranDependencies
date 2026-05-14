@@ -1,0 +1,9 @@
+repositories:
+    unilidar_sdk:
+        type: git
+        url: https://github.com/unitreerobotics/unilidar_sdk.git
+        version: main
+    SurroundViewRealTimeCatamaran:
+        type: git
+        url: https://github.com/JosepMarinG/SurroundViewRealTimeCatamaran.git
+        version: main
