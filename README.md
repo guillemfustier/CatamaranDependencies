@@ -1,16 +1,22 @@
 # Catamaran Dependencies
 
-This repository holds the source code for key hardware control components of the Catamaran project. It includes ROS 2 packages for controlling the rudder motors, the SIYI ZR30 camera system, and the onboard camera streams used by the GUI.
+This repository is a ROS 2 workspace for Catamaran hardware and perception dependencies. It includes packages for motor control, the SIYI ZR30 camera, onboard camera streams, and camera republishing for the GUI.
 
-## General Setup & Compilation
+## Setup
 
-This repository is structured as a ROS 2 workspace. To build all the packages, navigate to the root of the repository and run:
+Import the external repositories, if they are not already present:
+
+```bash
+vcs import . < catamaran_dependencies.repos
+```
+
+Build the workspace from the repository root:
 
 ```bash
 colcon build
 ```
 
-Remember to source the workspace after building:
+Source the workspace after building:
 
 ```bash
 source install/setup.bash
@@ -18,97 +24,47 @@ source install/setup.bash
 
 ## External Repositories
 
-Some dependencies are kept as standalone repositories and should be brought into the workspace with `vcs`.
+Some dependencies are kept as standalone repositories and are listed in [`catamaran_dependencies.repos`](./catamaran_dependencies.repos):
 
-```bash
-vcs import . < catamaran_dependencies.repos
-```
+- [`unilidar_sdk`](https://github.com/unitreerobotics/unilidar_sdk.git)
+- [`SurroundViewRealTimeCatamaran`](https://github.com/JosepMarinG/SurroundViewRealTimeCatamaran.git)
 
-Standalone repositories:
-- unilidar_sdk:
-- SurroundViewRealTimeCatamaran:
+## Documented Packages
 
-## Components
+This README is kept as a compact entry point. Package-specific setup, launch commands, topics, and troubleshooting notes live in each package README.
 
-### 1. `dynamixel_sdk`
+### `motor_bringup`
 
-*   **Overview**: This is the official C++ SDK provided by ROBOTIS for controlling Dynamixel smart servos. It is included here as a fundamental dependency for the `motor_bringup` package. It provides the low-level communication protocol to read/write from the motor registers.
+ROS 2 package for catamaran motor control. The current package README documents the MAVLink-based `cmdvel_mavlink_controller`, the legacy Mavros launch option, build command, parameters, and troubleshooting notes.
 
-*   **Build**: This package is a C++ library and will be automatically built as a dependency when you run `colcon build` in the workspace root. You do not need to build it individually.
-
-*   **Execution**: As a library, this package is not executed directly. It is used by the `rudder_angle_controller` node.
+See the [`motor_bringup` README](./motor_bringup/README.md).
 
 ---
 
-### 2. `motor_bringup`
+### `siyi_camera_controller`
 
-*   **Overview**: This ROS 2 package is responsible for the high-level control of the catamaran's rudder, which is actuated by Dynamixel motors.
+ROS 2 Humble driver for the SIYI ZR30 camera. It includes the Python SDK wrapper and nodes for camera stream, zoom, gimbal, and focus control.
 
-*   **Features**:
-    *   **`rudder_angle_controller`**: A C++ ROS 2 node that subscribes to an angle topic `rudder_angle`. When it receives an angle, it calculates the corresponding position for the motor's rack and pinion system and commands the Dynamixel motor to move to that position.
-
-*   **Build**: To build this package specifically, you can run:
-    ```bash
-    colcon build --packages-select motor_bringup
-    ```
-
-*   **Execution**:
-    1.  Ensure your Dynamixel motors are connected and powered, and the `U2D2` or other interface is correctly configured (e.g., permissions for `/dev/ttyUSB0`).
-    2.  In a sourced terminal, run the controller node:
-        ```bash
-        ros2 run motor_bringup rudder_angle_controller
-        ```
-    3.  To move the rudder, you can publish a message to its topic (the exact topic name is defined in the source code, but assuming it's `/rudder_angle`):
-        ```bash
-        # Example: Move rudder to 15.5 degrees
-        ros2 topic pub /rudder_angle std_msgs/msg/Float32 "{data: 15.5}"
-        ```
+See the [`siyi_camera_controller` README](./siyi_camera_controller/README.md) for dependencies, network setup, launch command, topics, and teleoperation.
 
 ---
 
-### 3. `siyi_camera_controller`
+### `catamaran_camera_streams`
 
-*   **Overview**: This package contains the `zr30camera` ROS 2 package, designed to interface with the SIYI ZR30 gimbal camera. It provides control over the gimbal's orientation, zoom, and focus. It includes the underlying Python SDK and ROS 2 nodes to expose its functionality.
+Publishes the catamaran's five onboard camera feeds as `sensor_msgs/msg/CompressedImage` topics.
 
-*   **Dependencies**: This package has Python dependencies. Install them before running:
-    ```bash
-    pip install -r siyi_camera_controller/requirements.txt
-    ```
-
-*   **Configuration**: You need to follow the instructions in the [siyi_camera_controller README](./siyi_camera_controller/README.md) to configure the camera connection parameters.
-
-*   **Features**:
-    *   **`siyi_sdk`**: A Python library that handles the serial communication protocol for the SIYI camera.
-    *   **`camera_controller`**: The main ROS 2 node that exposes topics and services for controlling the camera.
-    *   **`cam_teleop`**: A simple Python script that provides keyboard-based teleoperation to control the gimbal and zoom for quick testing.
-
-*   **Build**: This is a Python-based ROS 2 package. It will be correctly set up by the main `colcon build` command. To build it specifically:
-    ```bash
-    colcon build --packages-select zr30camera
-    ```
-
-*   **Execution**:
-    1.  The primary way to run the camera system is using its launch file, which starts all necessary nodes.
-        ```bash
-        ros2 launch zr30camera zr30camera_launch.py
-        ```
-    2.  To manually control the camera from your keyboard for testing, open a new, sourced terminal and run the teleop script:
-        ```bash
-        ros2 run zr30camera cam_teleop
-        ```
-
-For more general information on the camera controller, see the [siyi_camera_controller README](./siyi_camera_controller/README.md).
+See the [`catamaran_camera_streams` README](./catamaran_camera_streams/README.md) for the expected camera device symlinks, `udev` rule setup, and launch command.
 
 ---
 
-### 4. `catamaran_camera_streams`
+### `catamaran_camera_republisher`
 
-- **Overview**: Publishes the catamaran's five camera feeds as compressed ROS 2 image topics.
-- **Configuration and execution**: See the [catamaran_camera_streams README](./catamaran_camera_streams/README.md) for the expected camera device symlinks, `udev` rule setup, and launch command.
+Subscribes to the compressed topics from `catamaran_camera_streams`, applies per-camera FPS and quality controls, and republishes adapted compressed images for the MetaQuest GUI.
+
+See the [`catamaran_camera_republisher` README](./catamaran_camera_republisher/README.md) for the config file, run command, and control topic details.
 
 ---
 
-### 5. `catamaran_camera_republisher`
+### `dynamixel_sdk`
 
-- **Overview**: Subscribes to the compressed camera topics from `catamaran_camera_streams`, applies per-camera FPS and quality controls, and republishes adapted compressed image topics for the MetaQuest GUI.
-- **Configuration and execution**: See the [catamaran_camera_republisher README](./catamaran_camera_republisher/README.md) for the run command, the config file and publisher example commands.
+Official ROBOTIS C++ SDK for Dynamixel smart servos. It is included as a dependency for motor-related packages and is built automatically with the workspace.
