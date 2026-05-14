@@ -8,12 +8,18 @@ Per-camera ROS topics and limits are defined in `config/catamaran_cameras.yaml` 
 
 ## Run
 
+First make sure the camera streams launch is already running:
+
+```bash
+ros2 launch catamaran_camera_streams camera_streams.launch.py
+```
+
+Then launch the republisher
 ```bash
 ros2 run catamaran_camera_republisher adaptive_camera_republisher \
   --ros-args \
   -p config_file:=$(ros2 pkg prefix --share catamaran_camera_republisher)/config/catamaran_cameras.yaml
 ```
-
 ## Control topics
 
 Each camera listens on its `control_topic` from the config for `std_msgs/msg/Int32MultiArray`:

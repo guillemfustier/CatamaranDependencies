@@ -1,6 +1,6 @@
 # Catamaran Dependencies
 
-This repository holds the source code for key hardware control components of the Catamaran project. It includes ROS 2 packages for controlling the rudder motors and the SIYI ZR30 camera system.
+This repository holds the source code for key hardware control components of the Catamaran project. It includes ROS 2 packages for controlling the rudder motors, the SIYI ZR30 camera system, and the onboard camera streams used by the GUI.
 
 ## General Setup & Compilation
 
@@ -88,3 +88,17 @@ source install/setup.bash
         ```
 
 For more general information on the camera controller, see the [siyi_camera_controller README](./siyi_camera_controller/README.md).
+
+---
+
+### 4. `catamaran_camera_streams`
+
+- **Overview**: Publishes the catamaran's five camera feeds as compressed ROS 2 image topics.
+- **Configuration and execution**: See the [catamaran_camera_streams README](./catamaran_camera_streams/README.md) for the expected camera device symlinks, `udev` rule setup, and launch command.
+
+---
+
+### 5. `catamaran_camera_republisher`
+
+- **Overview**: Subscribes to the compressed camera topics from `catamaran_camera_streams`, applies per-camera FPS and quality controls, and republishes adapted compressed image topics for the MetaQuest GUI.
+- **Configuration and execution**: See the [catamaran_camera_republisher README](./catamaran_camera_republisher/README.md) for the run command, the config file and publisher example commands.
