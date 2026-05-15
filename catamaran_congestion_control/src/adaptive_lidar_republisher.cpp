@@ -5,10 +5,10 @@
 #include <rclcpp/rclcpp.hpp>
 #include <sensor_msgs/msg/point_cloud2.hpp>
 
-#include "catamaran_camera_republisher/adaptive_republisher.hpp"
+#include "catamaran_congestion_control/adaptive_republisher.hpp"
 
-using catamaran_camera_republisher::AdaptiveRepublisherNode;
-using catamaran_camera_republisher::StreamConfig;
+using catamaran_congestion_control::AdaptiveRepublisherNode;
+using catamaran_congestion_control::StreamConfig;
 using PointCloud2 = sensor_msgs::msg::PointCloud2;
 
 class AdaptiveLidarRepublisher : public AdaptiveRepublisherNode<PointCloud2> {
@@ -17,8 +17,8 @@ public:
   : AdaptiveRepublisherNode<PointCloud2>(
       "adaptive_lidar_republisher",
       "streams",
-      "ros2 run catamaran_camera_republisher adaptive_lidar_republisher "
-      "--ros-args -p config_file:=$(ros2 pkg prefix --share catamaran_camera_republisher)/"
+      "ros2 run catamaran_congestion_control adaptive_lidar_republisher "
+      "--ros-args -p config_file:=$(ros2 pkg prefix --share catamaran_congestion_control)/"
       "config/catamaran_lidar.yaml") {}
 
 private:
@@ -101,7 +101,7 @@ private:
 };
 
 int main(int argc, char **argv) {
-  return catamaran_camera_republisher::run_adaptive_republisher<AdaptiveLidarRepublisher>(
+  return catamaran_congestion_control::run_adaptive_republisher<AdaptiveLidarRepublisher>(
     argc,
     argv,
     "adaptive_lidar_republisher");

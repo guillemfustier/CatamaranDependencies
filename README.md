@@ -57,11 +57,11 @@ See the [`catamaran_camera_streams` README](./catamaran_camera_streams/README.md
 
 ---
 
-### `catamaran_camera_republisher`
+### `catamaran_congestion_control`
 
 Subscribes to the compressed camera topics and Unitree lidar cloud, applies per-stream FPS and quality controls, and republishes adapted data for the MetaQuest GUI.
 
-See the [`catamaran_camera_republisher` README](./catamaran_camera_republisher/README.md) for the config file, run command, and control topic details.
+See the [`catamaran_congestion_control` README](./catamaran_congestion_control/README.md) for the config file, run command, and control topic details.
 
 ---
 

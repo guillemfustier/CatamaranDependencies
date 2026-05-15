@@ -19,7 +19,7 @@
 #include <std_msgs/msg/int32_multi_array.hpp>
 #include <yaml-cpp/yaml.h>
 
-namespace catamaran_camera_republisher {
+namespace catamaran_congestion_control {
 
 template <typename T>
 T clamp_value(T value, T min_value, T max_value) {
@@ -376,4 +376,4 @@ int run_adaptive_republisher(int argc, char **argv, const std::string &logger_na
   return 0;
 }
 
-}  // namespace catamaran_camera_republisher
+}  // namespace catamaran_congestion_control

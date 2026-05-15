@@ -9,11 +9,11 @@
 #include <rclcpp/rclcpp.hpp>
 #include <sensor_msgs/msg/compressed_image.hpp>
 
-#include "catamaran_camera_republisher/adaptive_republisher.hpp"
+#include "catamaran_congestion_control/adaptive_republisher.hpp"
 
-using catamaran_camera_republisher::AdaptiveRepublisherNode;
-using catamaran_camera_republisher::StreamConfig;
-using catamaran_camera_republisher::clamp_value;
+using catamaran_congestion_control::AdaptiveRepublisherNode;
+using catamaran_congestion_control::StreamConfig;
+using catamaran_congestion_control::clamp_value;
 using CompressedImage = sensor_msgs::msg::CompressedImage;
 
 namespace {
@@ -46,8 +46,8 @@ public:
   : AdaptiveRepublisherNode<CompressedImage>(
       "adaptive_camera_republisher",
       "cameras",
-      "ros2 run catamaran_camera_republisher adaptive_camera_republisher "
-      "--ros-args -p config_file:=$(ros2 pkg prefix --share catamaran_camera_republisher)/"
+      "ros2 run catamaran_congestion_control adaptive_camera_republisher "
+      "--ros-args -p config_file:=$(ros2 pkg prefix --share catamaran_congestion_control)/"
       "config/catamaran_cameras.yaml") {}
 
 private:
@@ -126,7 +126,7 @@ private:
 };
 
 int main(int argc, char **argv) {
-  return catamaran_camera_republisher::run_adaptive_republisher<AdaptiveCameraRepublisher>(
+  return catamaran_congestion_control::run_adaptive_republisher<AdaptiveCameraRepublisher>(
     argc,
     argv,
     "adaptive_camera_republisher");

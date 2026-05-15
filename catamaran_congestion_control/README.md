@@ -1,4 +1,4 @@
-# catamaran_camera_republisher
+# catamaran_congestion_control
 
 ROS 2 Humble C++ republishers that subscribe to camera and lidar topics, receive per-stream control commands, and republish adapted data for the MetaQuest GUI.
 
@@ -10,12 +10,11 @@ The lidar republisher uses `config/catamaran_lidar.yaml` under `streams[]`. Its 
 
 ## Run
 
-First make sure the camera streams launch is already running (and also the lidar)
+First make sure the cameras and lidar are running:
 
 ```bash
 ros2 launch catamaran_camera_streams camera_streams.launch.py
 ```
-
 ```bash
 ros2 launch unitree_lidar_ros2 launch.py
 ```
@@ -23,15 +22,15 @@ ros2 launch unitree_lidar_ros2 launch.py
 Then launch the republishers:
 
 ```bash
-ros2 run catamaran_camera_republisher adaptive_camera_republisher \
+ros2 run catamaran_congestion_control adaptive_camera_republisher \
   --ros-args \
-  -p config_file:=$(ros2 pkg prefix --share catamaran_camera_republisher)/config/catamaran_cameras.yaml
+  -p config_file:=$(ros2 pkg prefix --share catamaran_congestion_control)/config/catamaran_cameras.yaml
 ```
 
 ```bash
-ros2 run catamaran_camera_republisher adaptive_lidar_republisher \
+ros2 run catamaran_congestion_control adaptive_lidar_republisher \
   --ros-args \
-  -p config_file:=$(ros2 pkg prefix --share catamaran_camera_republisher)/config/catamaran_lidar.yaml
+  -p config_file:=$(ros2 pkg prefix --share catamaran_congestion_control)/config/catamaran_lidar.yaml
 ```
 
 ## Control topics
