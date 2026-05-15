@@ -59,7 +59,7 @@ See the [`catamaran_camera_streams` README](./catamaran_camera_streams/README.md
 
 ### `catamaran_camera_republisher`
 
-Subscribes to the compressed topics from `catamaran_camera_streams`, applies per-camera FPS and quality controls, and republishes adapted compressed images for the MetaQuest GUI.
+Subscribes to the compressed camera topics and Unitree lidar cloud, applies per-stream FPS and quality controls, and republishes adapted data for the MetaQuest GUI.
 
 See the [`catamaran_camera_republisher` README](./catamaran_camera_republisher/README.md) for the config file, run command, and control topic details.
 
