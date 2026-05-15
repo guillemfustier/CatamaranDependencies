@@ -1,9 +1,9 @@
 <?xml version="1.0"?>
 <?xml-model href="http://download.ros.org/schema/package_format3.xsd" schematypens="http://www.w3.org/2001/XMLSchema"?>
 <package format="3">
-  <name>catamaran_camera_republisher</name>
+  <name>catamaran_congestion_control</name>
   <version>0.0.1</version>
-  <description>Adaptive compressed camera republisher for the Catamaran camera streams.</description>
+  <description>Adaptive camera and lidar republishers for Catamaran GUI streams.</description>
 
   <maintainer email="diegomarzafuertes@gmail.com">Diego Marzá</maintainer>
   <license>MIT</license>

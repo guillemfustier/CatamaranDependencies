@@ -1,0 +1,16 @@
+node:
+  scheduler_hz: 50.0
+  max_stale_sec: 2.0
+
+defaults:
+  max_fps: 30
+  default_fps: 10
+  default_quality: 100
+  min_active_fps: 1
+  min_active_quality: 5
+
+streams:
+  - name: unilidar_cloud
+    input_topic: /unilidar/cloud
+    output_topic: /unilidar/cloud/republished
+    control_topic: /unilidar/cloud/control
